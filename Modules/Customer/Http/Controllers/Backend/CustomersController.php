@@ -216,7 +216,7 @@ class CustomersController extends Controller
             ->addColumn('user_id', function ($data) {
                 $Profile_image = optional($data)->profile_image ?? default_user_avatar();
                 $name =optional($data)->full_name ?? default_user_name() ;
-                $email =  optional($data)->email ?? '--' ;
+                $email =  optional($data)->mobile ?? '--' ;
                 return view('booking::backend.bookings.datatable.user_id', compact('Profile_image','name','email'));
                 // return view('employee::backend.employees.employee_id', compact('data'));
             })
