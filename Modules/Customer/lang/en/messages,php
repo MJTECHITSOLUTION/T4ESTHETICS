@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'devis_history' => 'Historique des devis',
+    'print' => 'Imprimer',
+    'print_devis' => 'Imprimer le devis',
+    'no_services_in_package' => 'Aucun service trouvé dans ce package',
+    'no_packages_available' => 'Aucun package disponible',
+    'search_packages' => 'Rechercher des packages...',
+    'package_information' => 'Informations sur le package',
+    'package_details' => 'Détails du package',
+    'package_name' => 'Nom du package',
+    'package_price' => 'Prix du package',
+    'validity' => 'Validité',
+    'branch' => 'Agence',
+    'description' => 'Description',
+    'customize_services' => 'Personnaliser les services',
+    'package_services' => 'Services du package',
+    'add_another_service' => 'Ajouter un autre service',
+    'grand_total' => 'Total général',
+    'remarks' => 'Remarques',
+    'enter_remarks_here' => 'Saisir les remarques ici',
+    'service_name' => 'Nom du service',
+    'quantity' => 'Quantité',
+    'price' => 'Prix',
+    'discount' => 'Remise',
+    'tva' => 'TVA %',
+    'lot_number' => 'N° de lot',
+    'total' => 'Total',
+    'service_remarks' => 'Remarques du service',
+    'loading' => 'Chargement...',
+    'refresh' => 'Actualiser',
+    'view_details' => 'Voir les détails',
+];
+
+
