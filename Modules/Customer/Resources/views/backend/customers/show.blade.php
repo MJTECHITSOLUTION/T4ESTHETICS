@@ -363,6 +363,54 @@
         border-color: #667eea;
         box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
     }
+    
+    /* Signature modal styles */
+    .signature-canvas-container {
+        text-align: center;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 2px dashed #a7398b;
+    }
+    
+    .signature-canvas-container canvas {
+        box-shadow: 0 4px 8px rgba(167, 57, 139, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .signature-canvas-container canvas:hover {
+        box-shadow: 0 6px 12px rgba(167, 57, 139, 0.3);
+    }
+    
+    .signature-header h5 {
+        color: #a7398b;
+        font-weight: 600;
+    }
+    
+    .signature-container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(167, 57, 139, 0.1);
+    }
+    
+    /* Responsive signature canvas */
+    @media (max-width: 768px) {
+        .signature-canvas-container canvas {
+            height: 200px !important;
+            max-width: 100%;
+        }
+        
+        .modal-xl {
+            max-width: 95%;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .signature-canvas-container canvas {
+            height: 150px !important;
+        }
+    }
 </style>
 @endpush
 
@@ -2039,7 +2087,37 @@
     <div id="devis-history-tab-content"></div>
     <div id="invoice-tab-content"></div>
     <div id="consultations-tab-content"></div>
-    <div id="consentement-tab-content"></div>
+    <div id="consentement-tab-content">
+        <div class="tab-pane fade" id="consentement" role="tabpanel" aria-labelledby="consentement-tab">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5 class="card-title mb-0">Consentements</h5>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="float-right">
+                                <button type="button" class="btn btn-warning btn-sm" onclick="signAllConsents()" id="signAllBtn" style="display: none;">
+                                    <i class="fa fa-signature"></i> Signer tous les consentements
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="loadConsents()">
+                                    <i class="fa fa-refresh"></i> Actualiser
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="consents-loading" class="text-center" style="display: none;">
+                        <i class="fa fa-spinner fa-spin"></i> Chargement...
+                    </div>
+                    <div id="consents-content">
+                        <!-- Consents will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="listes-actes-tab-content"></div>
     <div id="phototheque-tab-content"></div>
     </div>
@@ -5824,5 +5902,531 @@ function removePayment(id, type) {
         });
     }
 }
+
+// Consent management functions
+function loadConsents() {
+    const customerId = {{ $data->id }};
+    const loadingDiv = document.getElementById('consents-loading');
+    const contentDiv = document.getElementById('consents-content');
+    
+    loadingDiv.style.display = 'block';
+    contentDiv.innerHTML = '';
+    
+    fetch(`/app/customers/${customerId}/consents`, {
+        method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingDiv.style.display = 'none';
+        if (data.success) {
+            renderConsents(data.consents, data.customer_consents);
+        } else {
+            contentDiv.innerHTML = '<div class="alert alert-danger">Erreur lors du chargement des consentements</div>';
+        }
+    })
+    .catch(error => {
+        loadingDiv.style.display = 'none';
+        contentDiv.innerHTML = '<div class="alert alert-danger">Erreur lors du chargement des consentements</div>';
+        console.error('Error:', error);
+    });
+}
+
+function renderConsents(consents, customerConsents) {
+    const contentDiv = document.getElementById('consents-content');
+    
+    // Store consents globally for access by other functions
+    window.currentConsents = consents;
+    window.currentCustomerConsents = customerConsents;
+    
+    if (consents.length === 0) {
+        contentDiv.innerHTML = '<div class="alert alert-info">Aucun consentement configuré</div>';
+        return;
+    }
+    
+    let html = '<div class="row">';
+    
+    consents.forEach(consent => {
+        const customerConsent = customerConsents[consent.id];
+        const hasConsented = customerConsent ? customerConsent.has_consented : false;
+        const consentedAt = customerConsent && customerConsent.consented_at ? 
+            new Date(customerConsent.consented_at).toLocaleDateString('fr-FR') : null;
+        const revokedAt = customerConsent && customerConsent.revoked_at ? 
+            new Date(customerConsent.revoked_at).toLocaleDateString('fr-FR') : null;
+        
+        html += `
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">${consent.name}</h6>
+                        ${consent.is_required ? '<span class="badge badge-warning ml-2">Requis</span>' : ''}
+                    </div>
+                    <div class="card-body">
+                        ${consent.description ? `<p class="text-muted">${consent.description}</p>` : ''}
+                        
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="consent_${consent.id}" 
+                                       ${hasConsented ? 'checked' : ''} 
+                                       onchange="updateConsent(${consent.id}, this.checked)">
+                                <label class="form-check-label" for="consent_${consent.id}">
+                                    J'accepte ce consentement
+                                </label>
+                            </div>
+                        </div>
+                        
+                        ${hasConsented && consentedAt ? 
+                            `<small class="text-success"><i class="fa fa-check"></i> Consentement donné le ${consentedAt}</small>` : ''}
+                        ${!hasConsented && revokedAt ? 
+                            `<small class="text-danger"><i class="fa fa-times"></i> Consentement révoqué le ${revokedAt}</small>` : ''}
+                        ${hasConsented && customerConsent && customerConsent.has_signature ? 
+                            `<small class="text-info"><i class="fa fa-signature"></i> Signé le ${customerConsent.signed_at ? new Date(customerConsent.signed_at).toLocaleDateString('fr-FR') : 'N/A'}</small>` : ''}
+                        
+                        <div class="mt-2">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-info" 
+                                        onclick="showConsentDetails(${consent.id})">
+                                    <i class="fa fa-eye"></i> Voir
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-success" 
+                                        onclick="generateConsentPdf(${consent.id})">
+                                    <i class="fa fa-file-pdf"></i> PDF
+                                </button>
+                            </div>
+                            ${hasConsented ? 
+                                `<div class="mt-2">
+                                    <button type="button" class="btn btn-sm ${customerConsent && customerConsent.has_signature ? 'btn-success' : 'btn-warning'}" 
+                                            onclick="showSignatureModal(${consent.id}, '${consent.name}')">
+                                        <i class="fa fa-signature"></i> ${customerConsent && customerConsent.has_signature ? 'Re-signer' : 'Signer'}
+                                    </button>
+                                </div>` : ''
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    contentDiv.innerHTML = html;
+    
+    // Show/hide "Sign All" button based on consents that need signing
+    const signAllBtn = document.getElementById('signAllBtn');
+    const hasUnsignedConsents = consents.some(consent => {
+        const customerConsent = customerConsents[consent.id];
+        return customerConsent && customerConsent.has_consented && !customerConsent.has_signature;
+    });
+    
+    if (signAllBtn) {
+        signAllBtn.style.display = hasUnsignedConsents ? 'inline-block' : 'none';
+    }
+}
+
+function updateConsent(consentId, hasConsented) {
+    const customerId = {{ $data->id }};
+    
+    fetch(`/app/customers/${customerId}/consents`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+            consent_id: consentId,
+            has_consented: hasConsented
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload consents to show updated status
+            loadConsents();
+        } else {
+            alert('Erreur lors de la mise à jour du consentement');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Erreur lors de la mise à jour du consentement');
+    });
+}
+
+function showConsentDetails(consentId) {
+    // Find the consent data from the current loaded consents
+    const consentData = window.currentConsents ? window.currentConsents.find(c => c.id === consentId) : null;
+    
+    if (!consentData) {
+        alert('Données du consentement non trouvées');
+        return;
+    }
+    
+    const name = consentData.name || 'Consentement';
+    const content = consentData.content || 'Aucun contenu disponible';
+    
+           const modalHtml = `
+               <div class="modal fade" id="consentModal" tabindex="-1" aria-labelledby="consentModalLabel" aria-hidden="true">
+                   <div class="modal-dialog modal-lg">
+                       <div class="modal-content">
+                           <div class="modal-header" style="background-color: #a7398b; color: white;">
+                               <h5 class="modal-title" id="consentModalLabel">${name}</h5>
+                               <button type="button" class="close text-white" onclick="closeConsentModal()" aria-label="Close">
+                                   <span aria-hidden="true">&times;</span>
+                               </button>
+                           </div>
+                    <div class="modal-body">
+                        <div class="consent-details">
+                            <h6>Description:</h6>
+                            <p class="text-muted">${consentData.description || 'Aucune description disponible'}</p>
+                            
+                            <h6>Contenu:</h6>
+                            <div class="consent-content" style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #007bff;">
+                                ${content.replace(/\n/g, '<br>')}
+                            </div>
+                            
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    <strong>Type:</strong> 
+                                    ${consentData.is_required ? '<span class="badge badge-warning">Requis</span>' : '<span class="badge badge-secondary">Optionnel</span>'}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                           <div class="modal-footer" style="background-color: #f8f9fa;">
+                               <button type="button" class="btn btn-secondary" onclick="closeConsentModal()">Fermer</button>
+                               <button type="button" class="btn text-white" style="background-color: #a7398b; border-color: #a7398b;" onclick="generateConsentPdf(${consentId})">
+                                   <i class="fa fa-file-pdf"></i> Générer PDF
+                               </button>
+                           </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('consentModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add new modal
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    $('#consentModal').modal('show');
+    
+    // Remove modal from DOM when hidden
+    $('#consentModal').on('hidden.bs.modal', function () {
+        $(this).remove();
+    });
+}
+
+// Generate PDF for consent
+function generateConsentPdf(consentId) {
+    const customerId = {{ $data->id }};
+    const url = `/app/customers/consents/${consentId}/pdf/${customerId}`;
+    window.open(url, '_blank');
+}
+
+// Show signature modal
+function showSignatureModal(consentId, consentName) {
+    const modalHtml = `
+        <div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #a7398b; color: white;">
+                        <h4 class="modal-title" id="signatureModalLabel">
+                            <i class="fa fa-signature"></i> Signature - ${consentName}
+                        </h4>
+                        <button type="button" class="close text-white" onclick="closeSignatureModal()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="alert" style="background-color: #f8f9fa; border-left: 4px solid #a7398b; color: #333;">
+                                    <i class="fa fa-info-circle" style="color: #a7398b;"></i>
+                                    <strong>Instructions:</strong> Veuillez signer dans la zone ci-dessous en utilisant votre souris ou votre doigt (sur mobile).
+                                </div>
+                                <div class="signature-container">
+                                    <div class="signature-header mb-3">
+                                        <h5 style="color: #a7398b;"><i class="fa fa-pen"></i> Zone de signature</h5>
+                                        <p class="text-muted">Signez dans la zone blanche ci-dessous</p>
+                                    </div>
+                                    <div class="signature-canvas-container">
+                                        <canvas id="signatureCanvas" width="700" height="250" 
+                                                style="border: 3px solid #a7398b; cursor: crosshair; border-radius: 8px; background-color: white; width: 100%; max-width: 700px;"></canvas>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="clearSignature()">
+                                            <i class="fa fa-eraser"></i> Effacer la signature
+                                        </button>
+                                        <small class="text-muted ml-2">Cliquez pour effacer et recommencer</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card" style="border-color: #a7398b;">
+                                    <div class="card-header text-white" style="background-color: #a7398b;">
+                                        <h6 class="mb-0"><i class="fa fa-info-circle"></i> Informations</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <h6>Consentement:</h6>
+                                        <p class="text-muted">${consentName}</p>
+                                        
+                                        <h6>Date:</h6>
+                                        <p class="text-muted">${new Date().toLocaleDateString('fr-FR')}</p>
+                                        
+                                        <h6>Client:</h6>
+                                        <p class="text-muted">{{ $data->first_name }} {{ $data->last_name }}</p>
+                                        
+                                        <div class="alert mt-3" style="background-color: #fff3cd; border-left: 4px solid #a7398b; color: #856404;">
+                                            <i class="fa fa-exclamation-triangle" style="color: #a7398b;"></i>
+                                            <strong>Important:</strong> En signant, vous confirmez avoir lu et accepté ce consentement.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="background-color: #f8f9fa;">
+                        <button type="button" class="btn btn-secondary" onclick="closeSignatureModal()">
+                            <i class="fa fa-times"></i> Annuler
+                        </button>
+                        <button type="button" class="btn btn-lg text-white" style="background-color: #a7398b; border-color: #a7398b;" onclick="saveSignature(${consentId})">
+                            <i class="fa fa-save"></i> Sauvegarder la signature
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('signatureModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add new modal
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    $('#signatureModal').modal('show');
+    
+    // Initialize signature pad
+    setTimeout(initSignaturePad, 100);
+    
+    // Remove modal from DOM when hidden
+    $('#signatureModal').on('hidden.bs.modal', function () {
+        $(this).remove();
+    });
+}
+
+// Initialize signature pad
+function initSignaturePad() {
+    const canvas = document.getElementById('signatureCanvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    
+    // Set up drawing styles
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+    
+    // Touch events for mobile
+    canvas.addEventListener('touchstart', handleTouch);
+    canvas.addEventListener('touchmove', handleTouch);
+    canvas.addEventListener('touchend', stopDrawing);
+    
+    function startDrawing(e) {
+        isDrawing = true;
+        const rect = canvas.getBoundingClientRect();
+        lastX = e.clientX - rect.left;
+        lastY = e.clientY - rect.top;
+    }
+    
+    function draw(e) {
+        if (!isDrawing) return;
+        
+        const rect = canvas.getBoundingClientRect();
+        const currentX = e.clientX - rect.left;
+        const currentY = e.clientY - rect.top;
+        
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(currentX, currentY);
+        ctx.stroke();
+        
+        lastX = currentX;
+        lastY = currentY;
+    }
+    
+    function stopDrawing() {
+        isDrawing = false;
+    }
+    
+    function handleTouch(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                         e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        });
+        canvas.dispatchEvent(mouseEvent);
+    }
+}
+
+// Clear signature
+function clearSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+// Save signature
+function saveSignature(consentId) {
+    const canvas = document.getElementById('signatureCanvas');
+    if (!canvas) return;
+    
+    // Check if canvas is empty
+    const ctx = canvas.getContext('2d');
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const isEmpty = imageData.data.every(pixel => pixel === 0);
+    
+    if (isEmpty) {
+        alert('Veuillez signer avant de sauvegarder');
+        return;
+    }
+    
+    const signatureData = canvas.toDataURL('image/png');
+    const customerId = {{ $data->id }};
+    
+    fetch(`/app/customers/${customerId}/consents/${consentId}/signature`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+            signature: signatureData
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message with better styling
+            const successHtml = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle"></i>
+                    <strong>Succès!</strong> Signature sauvegardée avec succès.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+            `;
+            
+            // Add success message to modal body
+            const modalBody = document.querySelector('#signatureModal .modal-body');
+            if (modalBody) {
+                modalBody.insertAdjacentHTML('afterbegin', successHtml);
+            }
+            
+            // Hide modal after short delay
+            setTimeout(() => {
+                $('#signatureModal').modal('hide');
+                
+                // Check if we're in "sign all" mode
+                if (window.remainingConsentsToSign && window.remainingConsentsToSign.length > 0) {
+                    // Show next consent to sign
+                    const nextConsent = window.remainingConsentsToSign.shift();
+                    setTimeout(() => {
+                        showSignatureModal(nextConsent.id, nextConsent.name);
+                    }, 500);
+                } else {
+                    // Reload consents to show updated status
+                    loadConsents();
+                }
+            }, 1500);
+        } else {
+            alert('Erreur lors de la sauvegarde de la signature');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Erreur lors de la sauvegarde de la signature');
+    });
+}
+
+// Close signature modal function
+function closeSignatureModal() {
+    $('#signatureModal').modal('hide');
+    // Clear any existing alerts
+    const existingAlerts = document.querySelectorAll('#signatureModal .alert');
+    existingAlerts.forEach(alert => alert.remove());
+}
+
+// Close consent modal function
+function closeConsentModal() {
+    $('#consentModal').modal('hide');
+}
+
+// Sign all consents function
+function signAllConsents() {
+    if (!window.currentConsents) {
+        alert('Aucun consentement trouvé');
+        return;
+    }
+    
+    const unsignedConsents = window.currentConsents.filter(consent => {
+        const customerConsent = window.currentCustomerConsents ? window.currentCustomerConsents[consent.id] : null;
+        return customerConsent && customerConsent.has_consented && !customerConsent.has_signature;
+    });
+    
+    if (unsignedConsents.length === 0) {
+        alert('Tous les consentements sont déjà signés');
+        return;
+    }
+    
+    if (confirm(`Voulez-vous signer ${unsignedConsents.length} consentement(s) ?`)) {
+        // Show signature modal for the first unsigned consent
+        const firstConsent = unsignedConsents[0];
+        showSignatureModal(firstConsent.id, firstConsent.name);
+        
+        // Store the remaining consents to sign
+        window.remainingConsentsToSign = unsignedConsents.slice(1);
+    }
+}
+
+// Load consents when consent tab is clicked
+document.addEventListener('DOMContentLoaded', function() {
+    const consentTab = document.getElementById('consentement-tab');
+    if (consentTab) {
+        consentTab.addEventListener('click', function() {
+            setTimeout(loadConsents, 100); // Small delay to ensure tab is active
+        });
+    }
+});
 </script>
 @endpush

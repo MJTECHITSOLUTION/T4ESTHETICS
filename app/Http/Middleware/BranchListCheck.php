@@ -16,6 +16,7 @@ class BranchListCheck
      */
     public function handle(Request $request, Closure $next)
     {
+        // dd(auth()->user()->hasRole('praticien'));
         if (auth()->check()) {
             if (auth()->user()->hasRole('user')) {
                 \Auth::logout();

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Customer\Http\Controllers\Backend\CustomersController;
+use Modules\Customer\Http\Controllers\Backend\ConsentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,6 +102,24 @@ Route::group(['prefix' => 'app', 'as' => 'backend.', 'middleware' => ['auth']], 
         Route::delete('galleries/{galleryId}/images/{mediaId}', [CustomersController::class, 'deleteActGalleryImage'])->name('acts.galleries.images.delete');
         Route::delete('galleries/{galleryId}', [CustomersController::class, 'deleteActGallery'])->name('acts.galleries.delete');
 
+        // Customer Consents routes
+        Route::get('{customerId}/consents', [CustomersController::class, 'getCustomerConsents'])->name('consents.index');
+        Route::post('{customerId}/consents', [CustomersController::class, 'storeCustomerConsent'])->name('consents.store');
+        Route::delete('consents/{consentId}', [CustomersController::class, 'deleteCustomerConsent'])->name('consents.delete');
+        Route::post('{customerId}/consents/{consentId}/signature', [CustomersController::class, 'saveSignature'])->name('consents.signature');
+        Route::get('consents/{consentId}/pdf/{customerId?}', [CustomersController::class, 'generateConsentPdf'])->name('consents.pdf');
+
     });
+
+    /*
+     *
+     *  Backend Consents Routes
+     *
+     * ---------------------------------------------------------------------
+     */
+    Route::group(['prefix' => 'consents', 'as' => 'consents.'], function () {
+        Route::get('index_data', [ConsentController::class, 'index_data'])->name('index_data');
+    });
+    Route::resource('consents', ConsentController::class);
     Route::resource('customers', CustomersController::class);
 });

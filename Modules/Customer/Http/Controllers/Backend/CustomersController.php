@@ -18,7 +18,6 @@ use Modules\Customer\Models\DevisDetail;
 use Modules\Customer\Models\DevisFacture;
 use Modules\Package\Models\Package;
 use Modules\Tax\Models\Tax;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +26,7 @@ use Modules\Customer\Models\MedicalRecord;
 use Modules\Customer\Models\MedicalHistory;
 use Modules\Customer\Models\MedicalHistoryType;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Modules\Customer\Models\CustomerAct;
 use Modules\Customer\Models\CustomerActGallery;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +34,8 @@ use Modules\Service\Models\Service as ServiceModel;
 use App\Models\Branch;
 use Modules\Service\Models\ServiceEmployee;
 use Modules\Service\Models\ServiceBranches;
+use Modules\Customer\Models\Consent;
+use Modules\Customer\Models\CustomerConsent;
 
 class CustomersController extends Controller
 {
@@ -1985,5 +1987,155 @@ class CustomersController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['status' => false, 'message' => 'Validation failed', 'errors' => $e->errors()], 422);
         }
+    }
+
+    /**
+     * Get customer consents for a specific customer
+     */
+    public function getCustomerConsents($customerId)
+    {
+        $customer = User::findOrFail($customerId);
+        $consents = Consent::active()->ordered()->get();
+        
+        // Get existing customer consents
+        $customerConsents = CustomerConsent::where('user_id', $customerId)
+            ->with('consent')
+            ->get()
+            ->keyBy('consent_id');
+
+        return response()->json([
+            'success' => true,
+            'consents' => $consents,
+            'customer_consents' => $customerConsents,
+        ]);
+    }
+
+    /**
+     * Store or update customer consent
+     */
+    public function storeCustomerConsent(Request $request, $customerId)
+    {
+        $request->validate([
+            'consent_id' => 'required|exists:consents,id',
+            'has_consented' => 'required|boolean',
+            'notes' => 'nullable|string',
+        ]);
+
+        $customer = User::findOrFail($customerId);
+        $consent = Consent::findOrFail($request->consent_id);
+
+        $customerConsent = CustomerConsent::updateOrCreate(
+            [
+                'user_id' => $customerId,
+                'consent_id' => $request->consent_id,
+            ],
+            [
+                'has_consented' => $request->has_consented,
+                'consented_at' => $request->has_consented ? now() : null,
+                'revoked_at' => !$request->has_consented ? now() : null,
+                'notes' => $request->notes,
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Consent updated successfully.',
+            'customer_consent' => $customerConsent,
+        ]);
+    }
+
+    /**
+     * Delete customer consent
+     */
+    public function deleteCustomerConsent($customerConsentId)
+    {
+        $customerConsent = CustomerConsent::findOrFail($customerConsentId);
+        $customerConsent->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Consent record deleted successfully.',
+        ]);
+    }
+
+
+    /**
+     * Save signature for customer consent
+     */
+    public function saveSignature(Request $request, $customerId, $consentId)
+    {
+        $request->validate([
+            'signature' => 'required|string', // Base64 signature data
+        ]);
+
+        $customer = User::findOrFail($customerId);
+        $consent = Consent::findOrFail($consentId);
+
+        // Get or create customer consent
+        $customerConsent = CustomerConsent::updateOrCreate(
+            [
+                'user_id' => $customerId,
+                'consent_id' => $consentId,
+            ],
+            [
+                'has_consented' => true,
+                'consented_at' => now(),
+                'revoked_at' => null,
+            ]
+        );
+
+        // Save signature
+        $signatureData = $request->signature;
+        
+        // Save signature as file
+        $signatureFileName = 'signatures/consent_' . $consentId . '_customer_' . $customerId . '_' . now()->format('Y-m-d_H-i-s') . '.png';
+        $signaturePath = 'public/' . $signatureFileName;
+        
+        // Decode base64 and save file
+        $signatureData = str_replace('data:image/png;base64,', '', $signatureData);
+        $signatureData = str_replace(' ', '+', $signatureData);
+        $signatureImage = base64_decode($signatureData);
+        
+        Storage::put($signaturePath, $signatureImage);
+
+        // Update customer consent with signature
+        $customerConsent->addSignature($request->signature, $signatureFileName);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Signature saved successfully.',
+            'customer_consent' => $customerConsent,
+        ]);
+    }
+
+    /**
+     * Generate PDF for consent
+     */
+    public function generateConsentPdf($consentId, $customerId = null)
+    {
+        $consent = Consent::findOrFail($consentId);
+        $customer = $customerId ? User::findOrFail($customerId) : null;
+        
+        // Get customer consent if customer is provided
+        $customerConsent = null;
+        if ($customer) {
+            $customerConsent = CustomerConsent::where('user_id', $customerId)
+                ->where('consent_id', $consentId)
+                ->first();
+        }
+
+        $data = [
+            'consent' => $consent,
+            'customer' => $customer,
+            'customerConsent' => $customerConsent,
+            'generated_at' => now()->format('d/m/Y H:i'),
+        ];
+        // dd($data);
+
+        $pdf = Pdf::loadView('customer::backend.consents.pdf', $data);
+        
+        $filename = 'consent_' . $consent->id . '_' . ($customer ? $customer->id : 'template') . '_' . now()->format('Y-m-d_H-i-s') . '.pdf';
+        
+        return $pdf->stream($filename);
     }
 }

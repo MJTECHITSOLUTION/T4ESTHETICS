@@ -95,7 +95,7 @@ $notifications_count = optional(auth()->user())->unreadNotifications->count();
                       </div>
                     @endif
                   </a>
-                    @role('admin')
+                
                   <ul class="p-0 sub-drop dropdown-menu dropdown-menu-end iq-sub-drop">
                     <div class="m-0 shadow-none card">
                       <div class="py-3 card-header d-flex justify-content-between border-bottom">
@@ -147,7 +147,7 @@ $notifications_count = optional(auth()->user())->unreadNotifications->count();
                       </div>
                     </div>
                   </ul>
-                  @endrole
+          
                   
                 </li>
                 @endif
