@@ -164,6 +164,21 @@
         font-weight: 600;
         position: relative;
     }
+    .table-dark {
+        background-color: #a7398b !important;
+        background: #a7398b !important;
+        color: #fff !important;
+        th {
+            background-color: #a7398b !important;
+            background: #a7398b !important;
+            color: #fff !important;
+        }
+        td {
+            background-color: #a7398b !important;
+            background: #a7398b !important;
+            color: #fff !important;
+        }
+    }
     
     .step-indicator .step.active {
         background: #667eea;
@@ -411,6 +426,285 @@
             height: 150px !important;
         }
     }
+    
+    /* Photo Selection Styles */
+    .photo-selection-container {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .photo-selection-container:hover {
+        border-color: #007bff;
+        box-shadow: 0 4px 12px rgba(0,123,255,0.15);
+    }
+    
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 10px;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+    
+    .photo-thumbnail {
+        position: relative;
+        aspect-ratio: 1;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .photo-thumbnail:hover {
+        transform: scale(1.05);
+        border-color: #007bff;
+        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+    }
+    
+    .photo-thumbnail.selected {
+        border-color: #28a745;
+        box-shadow: 0 0 0 3px rgba(40,167,69,0.3);
+    }
+    
+    .photo-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: crisp-edges;
+        image-rendering: auto;
+        image-rendering: high-quality;
+        image-rendering: optimize-quality;
+        transition: transform 0.3s ease;
+    }
+    
+    .photo-thumbnail:hover img {
+        transform: scale(1.02);
+    }
+    
+    .photo-thumbnail .selection-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(40,167,69,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .photo-thumbnail.selected .selection-overlay {
+        opacity: 1;
+    }
+    
+    .photo-thumbnail .selection-overlay i {
+        color: white;
+        font-size: 1.5rem;
+    }
+    
+    .selected-photo-preview {
+        margin-top: 1rem;
+    }
+    
+    .selected-photo-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border: 2px solid #28a745;
+    }
+    
+    .selected-photo-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+    
+    .selected-photo-info {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    .selected-photo-info .badge {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .selected-photo-info .btn {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Photo Comparison Styles */
+    .comparison-wrapper {
+        position: relative;
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    /* Fullscreen mode styles */
+    .fullscreen-mode {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        background: #000 !important;
+    }
+    
+    .fullscreen-mode .comparison-wrapper {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    .fullscreen-mode .comparison-wrapper .badge {
+        font-size: 1rem !important;
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .fullscreen-mode #comparisonDivider {
+        width: 4px !important;
+    }
+    
+    .fullscreen-mode #comparisonDivider .position-absolute {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .comparison-wrapper:hover {
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2) !important;
+    }
+    
+    #comparisonDivider {
+        transition: left 0.1s ease;
+        user-select: none;
+    }
+    
+    #comparisonDivider:hover {
+        background: #007bff !important;
+        width: 3px !important;
+    }
+    
+    #comparisonDivider .fa-grip-vertical {
+        transition: transform 0.2s ease;
+    }
+    
+    #comparisonDivider:hover .fa-grip-vertical {
+        transform: scale(1.2);
+    }
+    
+    .comparison-wrapper .badge {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        font-weight: 600;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    #beforePhoto, #afterPhoto {
+        transition: all 0.3s ease;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
+        image-rendering: auto;
+        background-size: contain !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+    }
+    
+    /* High quality image rendering */
+    .comparison-wrapper img,
+    .photo-thumbnail img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: crisp-edges;
+        image-rendering: auto;
+        image-rendering: high-quality;
+        image-rendering: optimize-quality;
+        -webkit-backface-visibility: hidden;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        will-change: transform;
+    }
+    
+    /* Prevent image pixelation */
+    .comparison-wrapper,
+    .photo-thumbnail {
+        -webkit-backface-visibility: hidden;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        will-change: transform;
+    }
+    
+    /* Better image scaling for comparison photos */
+    #beforePhoto {
+        background-size: contain !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        background-color: #f8f9fa;
+    }
+    
+    #afterPhoto {
+        background-size: contain !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        background-color: #f8f9fa;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .comparison-wrapper {
+            height: 350px !important;
+        }
+        
+        .comparison-wrapper .badge {
+            font-size: 0.65rem;
+            padding: 0.4rem 0.6rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .comparison-wrapper {
+            height: 300px !important;
+        }
+        
+        #comparisonDivider {
+            width: 3px !important;
+        }
+        
+        #comparisonDivider .position-absolute {
+            width: 24px !important;
+            height: 24px !important;
+        }
+    }
 </style>
 @endpush
 
@@ -582,104 +876,114 @@
                 <div class="col-lg-6">
                     <h5 class="mb-4 text-primary">
                         <i class="fa-solid fa-id-card me-2"></i>
-                        {{ __('messages.personal_information') }}
+                        Informations personnelles
                     </h5>
                     
                     <div class="info-card">
-                        <div class="info-label">{{ __('customer.lbl_first_name') }}</div>
+                        <div class="info-label">Prénom</div>
                         <div class="info-value">{{ $data->first_name ?? 'N/A' }}</div>
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">{{ __('customer.lbl_last_name') }}</div>
+                        <div class="info-label">Nom</div>
                         <div class="info-value">{{ $data->last_name ?? 'N/A' }}</div>
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">{{ __('customer.lbl_Email') }}</div>
+                        <div class="info-label">Email</div>
                         <div class="info-value">{{ $data->email ?? 'N/A' }}</div>
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">{{ __('customer.lbl_phone_number') }}</div>
+                        <div class="info-label">Téléphone</div>
                         <div class="info-value">{{ $data->phone_number ?? 'N/A' }}</div>
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">{{ __('customer.lbl_gender') }}</div>
+                        <div class="info-label">Genre</div>
                         <div class="info-value">{{ ucfirst($data->gender ?? 'N/A') }}</div>
                     </div>
+                    
+                    <div class="info-card">
+                        <div class="info-label">Date de naissance</div>
+                        <div class="info-value">{{ $data->date_of_birth ? \Carbon\Carbon::parse($data->date_of_birth)->format('d/m/Y') : 'N/A' }}</div>
+                    </div>
+                    
+              
                 </div>
 
                 <!-- Account Status -->
                 <div class="col-lg-6">
                     <h5 class="mb-4 text-primary">
-                        <i class="fa-solid fa-shield-alt me-2"></i>
-                        {{ __('messages.account_status') }}
+                        <i class="fa-solid fa-user-cog me-2"></i>
+                        Statut du compte
                     </h5>
                     
                     <div class="info-card">
-                        <div class="info-label">{{ __('customer.lbl_verification_status') }}</div>
+                        <div class="info-label">Mobile</div>
+                        <div class="info-value">{{ $data->mobile ?? 'N/A' }}</div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-label">Profession</div>
+                        <div class="info-value">{{ $data->profession ?? 'N/A' }}</div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-label">Adresse</div>
+                        <div class="info-value">{{ $data->adresse ?? 'N/A' }}</div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-label">Langues parlées</div>
                         <div class="info-value">
-                            @if($data->email_verified_at)
-                                <span class="status-badge bg-success text-white">
-                                    <i class="fa-solid fa-check-circle me-1"></i>
-                                    {{ __('customer.msg_verified') }}
-                                </span>
+                            @if($data->langue_parlee)
+                                @if(is_array($data->langue_parlee))
+                                    {{ implode(', ', $data->langue_parlee) }}
+                                @else
+                                    {{ $data->langue_parlee }}
+                                @endif
                             @else
-                                <span class="status-badge bg-danger text-white">
-                                    <i class="fa-solid fa-times-circle me-1"></i>
-                                    {{ __('customer.msg_unverified') }}
-                                </span>
+                                N/A
                             @endif
                         </div>
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">{{ __('customer.lbl_status') }}</div>
+                        <div class="info-label">Motif de consultation</div>
                         <div class="info-value">
-                            @if($data->status)
-                                <span class="status-badge bg-success text-white">
-                                    <i class="fa-solid fa-user-check me-1"></i>
-                                    {{ __('messages.active') }}
-                                </span>
+                            @if($data->motif_consultation)
+                                @if(is_array($data->motif_consultation))
+                                    {{ implode(', ', $data->motif_consultation) }}
+                                @else
+                                    {{ $data->motif_consultation }}
+                                @endif
                             @else
-                                <span class="status-badge bg-danger text-white">
-                                    <i class="fa-solid fa-user-times me-1"></i>
-                                    {{ __('messages.inactive') }}
-                                </span>
+                                N/A
                             @endif
                         </div>
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">{{ __('customer.lbl_blocked') }}</div>
-                        <div class="info-value">
-                            @if($data->is_banned)
-                                <span class="status-badge bg-danger text-white">
-                                    <i class="fa-solid fa-ban me-1"></i>
-                                    {{ __('messages.yes') }}
-                                </span>
-                            @else
-                                <span class="status-badge bg-success text-white">
-                                    <i class="fa-solid fa-check me-1"></i>
-                                    {{ __('messages.no') }}
-                                </span>
-                            @endif
-                        </div>
+                        <div class="info-label">Origine du patient</div>
+                        <div class="info-value">{{ $data->origine_patient ?? 'N/A' }}</div>
                     </div>
                     
                     <div class="info-card">
-                        <div class="info-label">{{ __('messages.created_at') }}</div>
-                        <div class="info-value">{{ $data->created_at ? $data->created_at->format('M d, Y H:i A') : 'N/A' }}</div>
+                        <div class="info-label">Remarques internes</div>
+                        <div class="info-value">{{ $data->remarque_interne ?? 'N/A' }}</div>
                     </div>
+               
                     
+                    @if($data->last_notification_seen)
                     <div class="info-card">
-                        <div class="info-label">{{ __('messages.updated_at') }}</div>
-                        <div class="info-value">{{ $data->updated_at ? $data->updated_at->format('M d, Y H:i A') : 'N/A' }}</div>
+                        <div class="info-label">Dernière notification vue</div>
+                        <div class="info-value">{{ \Carbon\Carbon::parse($data->last_notification_seen)->format('d/m/Y H:i') }}</div>
                     </div>
+                    @endif
                 </div>
             </div>
+            
             
             <!-- Custom Fields -->
             @if(isset($data->custom_field_data) && !empty($data->custom_field_data))
@@ -1771,6 +2075,120 @@
             </div>
 
             <div id="gallery-sessions" class="row g-3"></div>
+            
+            <!-- Photo Comparison Section -->
+            <div class="mt-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fa-solid fa-balance-scale me-2"></i>
+                            Comparaison Avant/Après
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Sélection de Photos avec Aperçus -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="photo-selection-container">
+                                    <h6 class="text-primary mb-3">
+                                        <i class="fa-solid fa-camera me-2"></i>
+                                        Sélectionner Photo "Avant"
+                                    </h6>
+                                    <div id="beforePhotoGrid" class="photo-grid">
+                                        <!-- Les photos seront chargées ici -->
+                                    </div>
+                                    <div class="selected-photo-preview" id="beforeSelectedPreview" style="display: none;">
+                                        <div class="selected-photo-card">
+                                            <img id="beforeSelectedImg" src="" alt="Photo Avant sélectionnée">
+                                            <div class="selected-photo-info">
+                                                <span class="badge bg-danger">AVANT</span>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" id="removeBeforePhoto">
+                                                    <i class="fa-solid fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="photo-selection-container">
+                                    <h6 class="text-success mb-3">
+                                        <i class="fa-solid fa-camera me-2"></i>
+                                        Sélectionner Photo "Après"
+                                    </h6>
+                                    <div id="afterPhotoGrid" class="photo-grid">
+                                        <!-- Les photos seront chargées ici -->
+                                    </div>
+                                    <div class="selected-photo-preview" id="afterSelectedPreview" style="display: none;">
+                                        <div class="selected-photo-card">
+                                            <img id="afterSelectedImg" src="" alt="Photo Après sélectionnée">
+                                            <div class="selected-photo-info">
+                                                <span class="badge bg-success">APRÈS</span>
+                                                <button type="button" class="btn btn-sm btn-outline-success" id="removeAfterPhoto">
+                                                    <i class="fa-solid fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Vue de Comparaison -->
+                        <div id="photoComparisonContainer" class="position-relative" style="display: none;">
+                            <!-- Bouton Plein Écran -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0 text-primary">
+                                    <i class="fa-solid fa-balance-scale me-2"></i>
+                                    Comparaison en cours
+                                </h6>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="toggleFullscreenBtn">
+                                        <i class="fa-solid fa-expand me-2"></i>
+                                        Plein écran
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="resetComparisonBtn">
+                                        <i class="fa-solid fa-rotate-left me-2"></i>
+                                        Réinitialiser
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="comparison-wrapper position-relative" style="height: 70vh; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                                <!-- Before Photo -->
+                                <div id="beforePhoto" class="position-absolute top-0 start-0 w-100 h-100" style="background-size: cover; background-position: center; background-repeat: no-repeat;">
+                                </div>
+                                
+                                <!-- After Photo -->
+                                <div id="afterPhoto" class="position-absolute top-0 start-0 w-100 h-100" style="background-size: cover; background-position: center; background-repeat: no-repeat;">
+                                </div>
+                                
+                                <!-- Divider Line -->
+                                <div id="comparisonDivider" class="position-absolute top-0 h-100" style="width: 2px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.5); cursor: ew-resize; z-index: 10;">
+                                    <div class="position-absolute top-50 start-50 translate-middle" style="width: 20px; height: 20px; background: #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+                                        <i class="fa-solid fa-grip-vertical text-primary" style="font-size: 10px;"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Labels -->
+                                <div class="position-absolute top-3 start-3">
+                                    <span class="badge bg-danger">AVANT</span>
+                                </div>
+                                <div class="position-absolute top-3 end-3">
+                                    <span class="badge bg-success">APRÈS</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- État Vide -->
+                        <div id="comparisonEmpty" class="text-center py-5">
+                            <i class="fa-solid fa-images fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Sélectionnez deux photos pour comparer</h5>
+                            <p class="text-muted">Choisissez une photo "Avant" et une photo "Après" pour voir la comparaison.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Devis Tab -->
@@ -2045,7 +2463,7 @@
                         <p class="text-muted">Ajouter le premier dossier médical pour ce patient.</p>
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#medicalRecordModal">
                             <i class="fa-solid fa-file-circle-plus me-2"></i>
-                            Add Document
+                            Ajouter un document
                         </button>
                     </div>
                 </div>
@@ -2097,6 +2515,9 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="float-right">
+                                <button type="button" class="btn btn-success btn-sm" onclick="showConsentLinkModal()" id="generateConsentLinkBtn">
+                                    <i class="fa fa-link"></i> Générer un lien de consentement
+                                </button>
                                 <button type="button" class="btn btn-warning btn-sm" onclick="signAllConsents()" id="signAllBtn" style="display: none;">
                                     <i class="fa fa-signature"></i> Signer tous les consentements
                                 </button>
@@ -3131,6 +3552,83 @@
                 <button type="button" id="appendImagesBtn" class="btn btn-primary">
                     <i class="fa-solid fa-plus me-2"></i>Ajouter
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Consent Link Generation Modal -->
+<div class="modal fade" id="consentLinkModal" tabindex="-1" aria-labelledby="consentLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="consentLinkModalLabel">
+                    <i class="fa-solid fa-link me-2"></i>
+                    Générer un lien de consentement
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fa-solid fa-info-circle me-2"></i>
+                    Sélectionnez les consentements que vous souhaitez inclure dans le lien. Le client pourra modifier ses préférences via ce lien.
+                </div>
+                
+                <div id="consentSelectionContent">
+                    <div class="text-center">
+                        <i class="fa fa-spinner fa-spin"></i> Chargement des consentements...
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="generateConsentLinkBtn" onclick="generateConsentLink()">
+                    <i class="fa-solid fa-link me-2"></i>
+                    Générer le lien
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Consent Link Result Modal -->
+<div class="modal fade" id="consentLinkResultModal" tabindex="-1" aria-labelledby="consentLinkResultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="consentLinkResultModalLabel">
+                    <i class="fa-solid fa-check-circle me-2 text-success"></i>
+                    Lien de consentement généré
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success">
+                    <h6 class="alert-heading">
+                        <i class="fa-solid fa-check-circle me-2"></i>
+                        Lien généré avec succès
+                    </h6>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Lien de consentement :</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="generatedConsentLink" readonly>
+                            <button class="btn btn-outline-secondary" type="button" id="copyConsentLinkBtn">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Expire le :</label>
+                        <span id="consentLinkExpiry" class="text-muted"></span>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fa-solid fa-info-circle me-1"></i>
+                        Ce lien expirera dans 24 heures et ne peut être utilisé qu'une seule fois.
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>
@@ -6427,6 +6925,555 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(loadConsents, 100); // Small delay to ensure tab is active
         });
     }
+});
+
+// Consent Link Generation Functionality
+function showConsentLinkModal() {
+    const customerId = {{ $data->id }};
+    
+    // Show the modal
+    $('#consentLinkModal').modal('show');
+    
+    // Load available consents
+    loadConsentsForLinkGeneration(customerId);
+}
+
+function loadConsentsForLinkGeneration(customerId) {
+    $.ajax({
+        url: `/app/customers/${customerId}/consents`,
+        method: 'GET',
+        success: function(response) {
+            console.log('Consent response:', response);
+            if (response.success) {
+                // Use the same response structure as the existing loadConsents function
+                const consents = response.consents || [];
+                if (consents.length === 0) {
+                    $('#consentSelectionContent').html('<div class="alert alert-warning">Aucun consentement disponible pour ce client.</div>');
+                } else {
+                    displayConsentSelection(consents);
+                }
+            } else {
+                $('#consentSelectionContent').html('<div class="alert alert-danger">Erreur lors du chargement des consentements.</div>');
+            }
+        },
+        error: function(xhr) {
+            console.error('Error loading consents:', xhr);
+            // Fallback: try to load all active consents
+            loadAllActiveConsents();
+        }
+    });
+}
+
+function loadAllActiveConsents() {
+    $.ajax({
+        url: '/app/consents',
+        method: 'GET',
+        success: function(response) {
+            console.log('All consents response:', response);
+            if (response.data && response.data.length > 0) {
+                displayConsentSelection(response.data);
+            } else {
+                $('#consentSelectionContent').html('<div class="alert alert-warning">Aucun consentement disponible.</div>');
+            }
+        },
+        error: function(xhr) {
+            console.error('Error loading all consents:', xhr);
+            $('#consentSelectionContent').html('<div class="alert alert-danger">Erreur lors du chargement des consentements.</div>');
+        }
+    });
+}
+
+function displayConsentSelection(consents) {
+    let html = '<div class="row">';
+    
+    consents.forEach(function(consent) {
+        const isRequired = consent.is_required;
+        const badgeClass = isRequired ? 'bg-danger' : 'bg-secondary';
+        const badgeText = isRequired ? 'Obligatoire' : 'Optionnel';
+        
+        html += `
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="${consent.id}" id="consent_${consent.id}" checked>
+                            <label class="form-check-label" for="consent_${consent.id}">
+                                <strong>${consent.name}</strong>
+                                <span class="badge ${badgeClass} ms-2">${badgeText}</span>
+                            </label>
+                        </div>
+                        ${consent.description ? `<p class="text-muted small mt-2">${consent.description}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    $('#consentSelectionContent').html(html);
+}
+
+function generateConsentLink() {
+    const customerId = {{ $data->id }};
+    const selectedConsents = [];
+    
+    // Get selected consents
+    $('input[type="checkbox"]:checked').each(function() {
+        const value = $(this).val();
+        const intValue = parseInt(value);
+        console.log('Checkbox value:', value, 'Parsed as:', intValue, 'Is valid:', !isNaN(intValue) && intValue > 0);
+        if (!isNaN(intValue) && intValue > 0) {
+            selectedConsents.push(intValue);
+        }
+    });
+    
+    console.log('Selected consents:', selectedConsents);
+    
+    if (selectedConsents.length === 0) {
+        alert('Veuillez sélectionner au moins un consentement.');
+        return;
+    }
+    
+    const btn = $('#generateConsentLinkBtn');
+    const originalText = btn.html();
+    
+    // Show loading state
+    btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i>Génération...');
+    
+    $.ajax({
+        url: `/app/consents/generate-link/${customerId}`,
+        method: 'POST',
+        data: {
+            consent_ids: selectedConsents,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            if (response.success) {
+                // Close the selection modal
+                $('#consentLinkModal').modal('hide');
+                
+                // Show the result modal
+                $('#generatedConsentLink').val(response.consent_link);
+                $('#consentLinkExpiry').text(response.expires_at);
+                $('#consentLinkResultModal').modal('show');
+            } else {
+                alert('Erreur lors de la génération du lien: ' + (response.message || 'Erreur inconnue'));
+            }
+        },
+        error: function(xhr) {
+            let errorMessage = 'Erreur lors de la génération du lien.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+            alert(errorMessage);
+        },
+        complete: function() {
+            // Reset button state
+            btn.prop('disabled', false).html(originalText);
+        }
+    });
+}
+
+// Copy consent link to clipboard
+$(document).on('click', '#copyConsentLinkBtn', function() {
+    const linkInput = $('#generatedConsentLink');
+    linkInput.select();
+    linkInput[0].setSelectionRange(0, 99999); // For mobile devices
+    
+    try {
+        document.execCommand('copy');
+        $(this).html('<i class="fa-solid fa-check"></i>');
+        setTimeout(() => {
+            $(this).html('<i class="fa-solid fa-copy"></i>');
+        }, 2000);
+    } catch (err) {
+        // Fallback for modern browsers
+        navigator.clipboard.writeText(linkInput.val()).then(function() {
+            $('#copyConsentLinkBtn').html('<i class="fa-solid fa-check"></i>');
+            setTimeout(() => {
+                $('#copyConsentLinkBtn').html('<i class="fa-solid fa-copy"></i>');
+            }, 2000);
+        });
+    }
+});
+
+// Photo Comparison Functionality
+$(document).ready(function() {
+    let isDragging = false;
+    let currentPosition = 50; // Start at 50% (center)
+    let selectedBeforePhoto = null;
+    let selectedAfterPhoto = null;
+    
+    // Define the gallery route template for photo comparison
+    const GALLERIES_INDEX_TMPL_COMPARISON = `{{ route('backend.customers.acts.galleries.index', ['actId' => 'ACT_ID_PLACEHOLDER']) }}`;
+    
+    // Initialize comparison
+    function initializeComparison() {
+        const container = $('#photoComparisonContainer');
+        const emptyState = $('#comparisonEmpty');
+        
+        // Check if both photos are selected
+        if (selectedBeforePhoto && selectedAfterPhoto) {
+            container.show();
+            emptyState.hide();
+            loadComparisonPhotos();
+        } else {
+            container.hide();
+            emptyState.show();
+        }
+    }
+    
+    // Load photos into comparison view with quality optimization
+    function loadComparisonPhotos() {
+        if (selectedBeforePhoto && selectedAfterPhoto) {
+            // Preload images for better quality
+            const beforeImg = new Image();
+            const afterImg = new Image();
+            
+            beforeImg.onload = function() {
+                $('#beforePhoto').css('background-image', `url(${selectedBeforePhoto.url})`);
+                $('#beforePhoto').css('background-size', 'contain');
+                $('#beforePhoto').css('background-position', 'center');
+                $('#beforePhoto').css('background-repeat', 'no-repeat');
+            };
+            
+            afterImg.onload = function() {
+                $('#afterPhoto').css('background-image', `url(${selectedAfterPhoto.url})`);
+                $('#afterPhoto').css('background-size', 'contain');
+                $('#afterPhoto').css('background-position', 'center');
+                $('#afterPhoto').css('background-repeat', 'no-repeat');
+            };
+            
+            // Set image sources to trigger loading
+            beforeImg.src = selectedBeforePhoto.url;
+            afterImg.src = selectedAfterPhoto.url;
+            
+            updateComparisonPosition(currentPosition);
+        }
+    }
+    
+    // Load photo thumbnails into grids from selected acte
+    function loadPhotoThumbnails() {
+        const actId = $('#actSelect').val();
+        if (!actId) {
+            clearPhotoGrids();
+            return;
+        }
+        
+        // Show loading state
+        $('#beforePhotoGrid, #afterPhotoGrid').html('<div class="text-center py-3"><i class="fa-solid fa-spinner fa-spin"></i></div>');
+        
+        // Load gallery sessions for the selected acte
+        $.ajax({
+            url: GALLERIES_INDEX_TMPL_COMPARISON.replace('ACT_ID_PLACEHOLDER', actId),
+            method: 'GET',
+            success: function(resp) {
+                console.log('Sessions de galerie chargées:', resp);
+                const sessions = Array.isArray(resp) ? resp : resp.data || [];
+                populatePhotoGrids(sessions);
+            },
+            error: function(xhr, status, error) {
+                console.error('Erreur lors du chargement des sessions de galerie:', error);
+                clearPhotoGrids();
+                showAlert('Erreur lors du chargement des photos: ' + error, 'danger');
+            }
+        });
+    }
+    
+    // Remplir les grilles de photos avec les données de session réelles
+    function populatePhotoGrids(sessions) {
+        console.log('Remplissage des grilles de photos avec les sessions:', sessions);
+        const beforeGrid = $('#beforePhotoGrid');
+        const afterGrid = $('#afterPhotoGrid');
+        
+        // Vider le contenu existant
+        beforeGrid.empty();
+        afterGrid.empty();
+        
+        // Séparer les sessions par phase
+        const beforeSessions = sessions.filter(s => s.phase === 'before');
+        const afterSessions = sessions.filter(s => s.phase === 'after');
+        
+        console.log('Sessions Avant:', beforeSessions);
+        console.log('Sessions Après:', afterSessions);
+        
+        // Load "Avant" photos
+        if (beforeSessions.length > 0) {
+            beforeSessions.forEach(session => {
+                if (session.images && session.images.length > 0) {
+                    session.images.forEach((image, index) => {
+                        const thumbnailHtml = `
+                            <div class="photo-thumbnail" data-photo-id="${image.id}" data-photo-url="${image.url}" data-photo-title="Avant - ${session.session_date ? new Date(session.session_date).toLocaleDateString() : 'Session'}" data-session-id="${session.id}">
+                                <img src="${image.url}" alt="Avant - ${index + 1}" onerror="this.src='/images/placeholder.jpg'">
+                                <div class="selection-overlay">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                            </div>
+                        `;
+                        beforeGrid.append(thumbnailHtml);
+                    });
+                }
+            });
+        } else {
+            beforeGrid.html('<div class="text-center py-3 text-muted"><i class="fa-solid fa-camera me-2"></i>Aucune photo "Avant"</div>');
+        }
+        
+        // Load "Après" photos
+        if (afterSessions.length > 0) {
+            afterSessions.forEach(session => {
+                if (session.images && session.images.length > 0) {
+                    session.images.forEach((image, index) => {
+                        const thumbnailHtml = `
+                            <div class="photo-thumbnail" data-photo-id="${image.id}" data-photo-url="${image.url}" data-photo-title="Après - ${session.session_date ? new Date(session.session_date).toLocaleDateString() : 'Session'}" data-session-id="${session.id}">
+                                <img src="${image.url}" alt="Après - ${index + 1}" onerror="this.src='/images/placeholder.jpg'">
+                                <div class="selection-overlay">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                            </div>
+                        `;
+                        afterGrid.append(thumbnailHtml);
+                    });
+                }
+            });
+        } else {
+            afterGrid.html('<div class="text-center py-3 text-muted"><i class="fa-solid fa-camera me-2"></i>Aucune photo "Après"</div>');
+        }
+    }
+    
+    // Vider les grilles de photos
+    function clearPhotoGrids() {
+        $('#beforePhotoGrid').html('<div class="text-center py-3 text-muted"><i class="fa-solid fa-info-circle me-2"></i>Sélectionnez un acte pour voir les photos</div>');
+        $('#afterPhotoGrid').html('<div class="text-center py-3 text-muted"><i class="fa-solid fa-info-circle me-2"></i>Sélectionnez un acte pour voir les photos</div>');
+    }
+    
+    // Select photo for comparison
+    function selectPhoto(photoId, photoUrl, photoTitle, type) {
+        if (type === 'before') {
+            selectedBeforePhoto = { id: photoId, url: photoUrl, title: photoTitle };
+            showSelectedPhoto(selectedBeforePhoto, 'before');
+        } else {
+            selectedAfterPhoto = { id: photoId, url: photoUrl, title: photoTitle };
+            showSelectedPhoto(selectedAfterPhoto, 'after');
+        }
+        
+        // Update grid selection
+        $(`.photo-thumbnail[data-photo-id="${photoId}"]`).addClass('selected');
+        
+        initializeComparison();
+    }
+    
+    // Show selected photo preview
+    function showSelectedPhoto(photo, type) {
+        const previewId = type === 'before' ? 'beforeSelectedPreview' : 'afterSelectedPreview';
+        const imgId = type === 'before' ? 'beforeSelectedImg' : 'afterSelectedImg';
+        
+        $(`#${imgId}`).attr('src', photo.url);
+        $(`#${previewId}`).show();
+    }
+    
+    // Remove selected photo
+    function removeSelectedPhoto(type) {
+        if (type === 'before') {
+            if (selectedBeforePhoto) {
+                $(`.photo-thumbnail[data-photo-id="${selectedBeforePhoto.id}"]`).removeClass('selected');
+            }
+            selectedBeforePhoto = null;
+            $('#beforeSelectedPreview').hide();
+        } else {
+            if (selectedAfterPhoto) {
+                $(`.photo-thumbnail[data-photo-id="${selectedAfterPhoto.id}"]`).removeClass('selected');
+            }
+            selectedAfterPhoto = null;
+            $('#afterSelectedPreview').hide();
+        }
+        
+        initializeComparison();
+    }
+    
+    // Update comparison position
+    function updateComparisonPosition(percentage) {
+        const divider = $('#comparisonDivider');
+        const afterPhoto = $('#afterPhoto');
+        
+        divider.css('left', percentage + '%');
+        afterPhoto.css('clip-path', `inset(0 ${100 - percentage}% 0 0)`);
+    }
+    
+    // Mouse events for dragging
+    $('#comparisonDivider').on('mousedown', function(e) {
+        isDragging = true;
+        e.preventDefault();
+    });
+    
+    $(document).on('mousemove', function(e) {
+        if (!isDragging) return;
+        
+        const container = $('.comparison-wrapper');
+        const containerOffset = container.offset();
+        const containerWidth = container.width();
+        const mouseX = e.pageX - containerOffset.left;
+        const percentage = Math.max(0, Math.min(100, (mouseX / containerWidth) * 100));
+        
+        currentPosition = percentage;
+        updateComparisonPosition(percentage);
+    });
+    
+    $(document).on('mouseup', function() {
+        isDragging = false;
+    });
+    
+    // Touch events for mobile
+    $('#comparisonDivider').on('touchstart', function(e) {
+        isDragging = true;
+        e.preventDefault();
+    });
+    
+    $(document).on('touchmove', function(e) {
+        if (!isDragging) return;
+        
+        const container = $('.comparison-wrapper');
+        const containerOffset = container.offset();
+        const containerWidth = container.width();
+        const touchX = e.originalEvent.touches[0].pageX - containerOffset.left;
+        const percentage = Math.max(0, Math.min(100, (touchX / containerWidth) * 100));
+        
+        currentPosition = percentage;
+        updateComparisonPosition(percentage);
+    });
+    
+    $(document).on('touchend', function() {
+        isDragging = false;
+    });
+    
+    // Event handlers for photo selection
+    $(document).on('click', '#beforePhotoGrid .photo-thumbnail', function() {
+        const photoId = $(this).data('photo-id');
+        const photoUrl = $(this).data('photo-url');
+        const photoTitle = $(this).data('photo-title');
+        
+        // Remove previous selection
+        $('#beforePhotoGrid .photo-thumbnail').removeClass('selected');
+        
+        // Select new photo
+        selectPhoto(photoId, photoUrl, photoTitle, 'before');
+    });
+    
+    $(document).on('click', '#afterPhotoGrid .photo-thumbnail', function() {
+        const photoId = $(this).data('photo-id');
+        const photoUrl = $(this).data('photo-url');
+        const photoTitle = $(this).data('photo-title');
+        
+        // Remove previous selection
+        $('#afterPhotoGrid .photo-thumbnail').removeClass('selected');
+        
+        // Select new photo
+        selectPhoto(photoId, photoUrl, photoTitle, 'after');
+    });
+    
+    // Remove selected photos
+    $('#removeBeforePhoto').on('click', function() {
+        removeSelectedPhoto('before');
+    });
+    
+    $('#removeAfterPhoto').on('click', function() {
+        removeSelectedPhoto('after');
+    });
+    
+    $('#resetComparisonBtn').on('click', function() {
+        currentPosition = 50;
+        updateComparisonPosition(currentPosition);
+    });
+    
+    // Fullscreen functionality
+    let isFullscreen = false;
+    
+    $('#toggleFullscreenBtn').on('click', function() {
+        const comparisonContainer = $('#photoComparisonContainer');
+        const comparisonWrapper = $('.comparison-wrapper');
+        const btn = $(this);
+        
+        if (!isFullscreen) {
+            // Enter fullscreen
+            comparisonContainer.addClass('fullscreen-mode');
+            comparisonWrapper.css({
+                'position': 'fixed',
+                'top': '0',
+                'left': '0',
+                'width': '100vw',
+                'height': '100vh',
+                'z-index': '9999',
+                'border-radius': '0'
+            });
+            
+            // Mettre à jour le bouton
+            btn.html('<i class="fa-solid fa-compress me-2"></i>Sortir du plein écran');
+            isFullscreen = true;
+            
+            // Add close button
+            if (!$('#fullscreenCloseBtn').length) {
+                comparisonWrapper.append(`
+                    <button id="fullscreenCloseBtn" class="btn btn-danger position-absolute" style="top: 20px; right: 20px; z-index: 10000;">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                `);
+            }
+        } else {
+            // Exit fullscreen
+            exitFullscreen();
+        }
+    });
+    
+    // Exit fullscreen function
+    function exitFullscreen() {
+        const comparisonContainer = $('#photoComparisonContainer');
+        const comparisonWrapper = $('.comparison-wrapper');
+        const btn = $('#toggleFullscreenBtn');
+        
+        comparisonContainer.removeClass('fullscreen-mode');
+        comparisonWrapper.css({
+            'position': 'relative',
+            'top': 'auto',
+            'left': 'auto',
+            'width': '100%',
+            'height': '70vh',
+            'z-index': 'auto',
+            'border-radius': '8px'
+        });
+        
+        // Mettre à jour le bouton
+        btn.html('<i class="fa-solid fa-expand me-2"></i>Plein écran');
+        isFullscreen = false;
+        
+        // Remove close button
+        $('#fullscreenCloseBtn').remove();
+    }
+    
+    // Close fullscreen with close button
+    $(document).on('click', '#fullscreenCloseBtn', function() {
+        exitFullscreen();
+    });
+    
+    // Exit fullscreen with Escape key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && isFullscreen) {
+            exitFullscreen();
+        }
+    });
+    
+    // Connect to acte selection
+    $('#actSelect').on('change', function() {
+        loadPhotoThumbnails();
+        // Clear any existing selections when acte changes
+        selectedBeforePhoto = null;
+        selectedAfterPhoto = null;
+        $('#beforeSelectedPreview, #afterSelectedPreview').hide();
+        $('.photo-thumbnail').removeClass('selected');
+        initializeComparison();
+    });
+    
+    // Initialize on page load
+    clearPhotoGrids();
+    initializeComparison();
 });
 </script>
 @endpush

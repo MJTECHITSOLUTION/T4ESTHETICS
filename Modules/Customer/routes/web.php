@@ -119,6 +119,7 @@ Route::group(['prefix' => 'app', 'as' => 'backend.', 'middleware' => ['auth']], 
      */
     Route::group(['prefix' => 'consents', 'as' => 'consents.'], function () {
         Route::get('index_data', [ConsentController::class, 'index_data'])->name('index_data');
+        Route::post('generate-link/{customerId}', [ConsentController::class, 'generateConsentLink'])->name('generate_link');
     });
     Route::resource('consents', ConsentController::class);
     Route::resource('customers', CustomersController::class);

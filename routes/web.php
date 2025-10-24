@@ -46,6 +46,14 @@ Route::get('preconsultation/public/{customerId}', [PreconsultationController::cl
 Route::post('preconsultation/public', [PreconsultationController::class, 'store'])
     ->name('preconsultation.public.store')
     ->middleware('signed');
+
+// Public consent form (no auth required)
+Route::get('customer/consent/{token}', [\Modules\Customer\Http\Controllers\Backend\ConsentController::class, 'showConsentForm'])
+    ->name('customer.consent.form');
+Route::post('customer/consent/{token}', [\Modules\Customer\Http\Controllers\Backend\ConsentController::class, 'processConsentForm'])
+    ->name('customer.consent.process');
+Route::post('customer/consent/{token}/pdf', [\Modules\Customer\Http\Controllers\Backend\ConsentController::class, 'generateConsentPDF'])
+    ->name('customer.consent.pdf');
 Route::get('/', function () {
     $user = auth()->user();
     if (auth()->check() && $user instanceof \App\Models\User && method_exists($user, 'hasRole') && $user->hasRole('employee')) {

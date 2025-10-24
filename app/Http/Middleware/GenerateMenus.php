@@ -34,6 +34,7 @@ class GenerateMenus
                 $menuArray = MenuBuilder::getAllMenu()->where('menu_type', $type);
             }
 
+            
             foreach ($menuArray as $key => $value) {
                 if ($value->status) {
                     $this->makeMenu($menu, $value);
