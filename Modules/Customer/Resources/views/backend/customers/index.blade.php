@@ -51,7 +51,9 @@
             aria-describedby="addon-wrapping">
         </div>
         @hasPermission('add_customer')
-          <x-buttons.offcanvas target='#form-offcanvas' title="">{{ __('messages.new') }}</x-buttons.offcanvas>
+          <button type="button" class="btn btn-primary" data-open="empty-modal" data-crud-id="">
+            <i class="fa-solid fa-user-plus me-1"></i> {{ __('messages.new') }}
+          </button>
         @endhasPermission
       </x-slot>
     </x-backend.section-header>
@@ -60,10 +62,9 @@
   </div>
 </div>
 <div data-render="app">
-  <customer-offcanvas default-image="{{default_user_avatar()}}" create-title="{{ __('messages.new') }} {{ __('customer.singular_title') }}"
-    edit-title="{{ __('messages.edit') }} {{ __('customer.singular_title') }}" :customefield="{{ json_encode($customefield) }}">
-  </customer-offcanvas>
   <change-password create-title="{{ __('messages.change_password') }}"></change-password>
+  <input type="hidden" id="customerCreateUrl" value="{{ route("backend.$module_name.store") }}">
+  <input type="hidden" id="customerCsrfToken" value="{{ csrf_token() }}">
 </div>
 
 <!-- Empty Modal -->
@@ -435,8 +436,137 @@
           modalBody.empty();
         }, { once: true });
       } else {
-        // No id: show empty modal for custom content
-        modalBody.html('');
+        // No id: open create form in empty modal (full fields like edit)
+        const createUrl = $('#customerCreateUrl').val();
+        const token = $('#customerCsrfToken').val();
+        const genderOptions = ['male','female','other'];
+        const genderRadios = genderOptions.map(g => `
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" id="gender_${g}" value="${g}">
+            <label class="form-check-label" for="gender_${g}">${g.charAt(0).toUpperCase()+g.slice(1)}</label>
+          </div>
+        `).join('');
+        const languageOptions = [
+          { value: 'fr', label: 'Français' },
+          { value: 'ar', label: 'Arabe' },
+          { value: 'ber', label: 'Berbère' },
+          { value: 'en', label: 'Anglais' }
+        ];
+        const adressageOptions = [
+          { value: 'medecin', label: 'Médecin' },
+          { value: 'de_passage', label: 'De passage' },
+          { value: 'coiffeur', label: 'Coiffeur' },
+          { value: 'estheticienne', label: 'Esthéticienne' },
+          { value: 'pharmacien', label: 'Pharmacien' },
+          { value: 'collegue', label: 'Collègue' },
+          { value: 'proches', label: 'Proches' }
+        ];
+        const motifOptions = [
+          { value: 'cosmetique', label: 'Cosmétique' },
+          { value: 'visage', label: 'Visage' },
+          { value: 'cheveux', label: 'Cheveux' },
+          { value: 'intime', label: 'Intime' },
+          { value: 'silhouette', label: 'Silhouette' },
+          { value: 'epilation', label: 'Epilation' }
+        ];
+        const origineOptions = [
+          { value: 'de_passage', label: 'De passage' },
+          { value: 'site_web', label: 'Site web' },
+          { value: 'parrinage', label: 'Parrinage' },
+          { value: 'les_publicites', label: 'Les publicités' },
+          { value: 'autre', label: 'Autre' }
+        ];
+        const optionHtml = (opts) => opts.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+
+        const formHtml = `
+          <form action="${createUrl}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_token" value="${token}">
+            <div class="row g-3">
+              <div class="col-12 text-center">
+                <img src="{{ default_user_avatar() }}" class="img-fluid avatar avatar-120 avatar-rounded mb-2" alt="profile-image" />
+                <div class="mt-2">
+                  <input type="file" class="form-control" name="profile_image" accept=".jpeg,.jpg,.png,.gif">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">First name</label>
+                <input type="text" class="form-control" name="first_name" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Last name</label>
+                <input type="text" class="form-control" name="last_name" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Mobile</label>
+                <input type="text" class="form-control" name="mobile">
+              </div>
+              <div class="col-md-12">
+                <label class="form-label d-block">Gender</label>
+                ${genderRadios}
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Profession</label>
+                <input type="text" class="form-control" name="profession">
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Adresse</label>
+                <textarea class="form-control" rows="2" name="adresse"></textarea>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Langue parlée</label>
+                <select class="form-select" name="langue_parlee[]" multiple>
+                  ${optionHtml(languageOptions)}
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Adressage</label>
+                <select class="form-select" name="adressage">
+                  <option value=""></option>
+                  ${optionHtml(adressageOptions)}
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Motif de consultation</label>
+                <select class="form-select" name="motif_consultation[]" multiple>
+                  ${optionHtml(motifOptions)}
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Origine du patient</label>
+                <select class="form-select" name="origine_patient">
+                  <option value=""></option>
+                  ${optionHtml(origineOptions)}
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Remarque interne</label>
+                <textarea class="form-control" rows="2" name="remarque_interne"></textarea>
+              </div>
+              <div class="col-12 d-flex justify-content-end gap-2 mt-2">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">{{ __('messages.save') }}</button>
+              </div>
+            </div>
+          </form>
+        `;
+        modalBody.html(formHtml);
+        // Enhance selects with Select2
+        try {
+          const $modal = $('#emptyModal');
+          const select2Options = { width: '100%', dropdownParent: $modal, placeholder: '' };
+          $modal.find('select[name="langue_parlee[]"]').select2(select2Options);
+          $modal.find('select[name="motif_consultation[]"]').select2(select2Options);
+          $modal.find('select[name="adressage"]').select2(select2Options);
+          $modal.find('select[name="origine_patient"]').select2(select2Options);
+        } catch (e) {
+          console.warn('[CustomerModal] Select2 init failed (create)', e);
+        }
+        // Set modal title for create context
+        try { document.getElementById('emptyModalLabel').textContent = 'Nouveau patient'; } catch (_) {}
         modal.show();
       }
     });
