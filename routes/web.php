@@ -83,6 +83,10 @@ Route::group(['prefix' => 'app', 'middleware' => 'auth'], function () {
         // Role & Permissions Crud
         Route::resource('permission', PermissionController::class);
         Route::resource('role', RoleController::class);
+        
+        // Consultations
+        Route::get('consultations/index_data', [\App\Http\Controllers\ConsultationController::class, 'index_data'])->name('consultations.index_data');
+        Route::resource('consultations', \App\Http\Controllers\ConsultationController::class);
 
         Route::group(['prefix' => 'module', 'as' => 'module.'], function () {
             Route::get('index_data', [ModuleController::class, 'index_data'])->name('index_data');

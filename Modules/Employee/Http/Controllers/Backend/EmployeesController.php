@@ -18,6 +18,7 @@ use Modules\Employee\Http\Requests\EmployeeRequest;
 use Modules\Employee\Models\BranchEmployee;
 use Modules\Employee\Models\EmployeeRating;
 use Modules\Service\Models\ServiceEmployee;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 
 class EmployeesController extends Controller
@@ -129,6 +130,35 @@ class EmployeesController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * Get roles list for select dropdown.
+     *
+     * @return Response
+     */
+    public function role_list(Request $request)
+    {
+        $term = trim($request->q);
+
+        $query_data = Role::where(function ($q) use ($term) {
+            if (!empty($term)) {
+                $q->orWhere('name', 'LIKE', "%$term%");
+                $q->orWhere('title', 'LIKE', "%$term%");
+            }
+        })->get();
+
+        $data = [];
+
+        foreach ($query_data as $row) {
+            $data[] = [
+                'id' => $row->id,
+                'name' => $row->name ?? $row->title,
+                'title' => $row->title ?? $row->name,
+            ];
+        }
+
+        return response()->json($data);
+    }
+
     public function employee_list(Request $request)
     {
         $term = trim($request->q);
@@ -137,8 +167,8 @@ class EmployeesController extends Controller
 
         $role = $request->role;
 
-        // Need To Add Role Base
-        $query_data = User::role('employee')->with('media', 'branches')->where(function ($q) use ($term) {
+        // Show all users who are assigned to branches (personnel)
+        $query_data = User::whereHas('branches')->with('media', 'branches')->where(function ($q) use ($term) {
             if (!empty($term)) {
                 $q->orWhere('first_name', 'LIKE', "%$term%");
                 $q->orWhere('last_name', 'LIKE', "%$term%");
@@ -210,7 +240,11 @@ class EmployeesController extends Controller
     public function index_data(Datatables $datatable, Request $request)
     {
         $module_name = $this->module_name;
-        $query = User::select('users.*')->role(['employee', 'manager'])->branch()->with('media', 'mainBranch');
+        // Show all users who are assigned to branches (personnel)
+        $query = User::select('users.*')
+            ->whereHas('branches')
+            ->branch()
+            ->with('media', 'mainBranch', 'roles');
 
         $filter = $request->filter;
 
@@ -271,10 +305,26 @@ class EmployeesController extends Controller
                 $query->orderBy('service_count', $direction);
             })
             ->editColumn('is_manager', function ($data) {
+                // Display actual roles instead of just Manager/Staff
+                $roles = $data->roles;
+                if ($roles && $roles->count() > 0) {
+                    $badges = [];
+                    foreach ($roles as $role) {
+                        $badgeClass = 'bg-soft-info';
+                        if (strtolower($role->name) === 'manager') {
+                            $badgeClass = 'bg-soft-danger';
+                        } elseif (strtolower($role->name) === 'admin') {
+                            $badgeClass = 'bg-soft-warning';
+                        }
+                        $roleTitle = $role->title ?? ucfirst(str_replace('_', ' ', $role->name));
+                        $badges[] = '<span class="badge ' . $badgeClass . ' me-1">' . htmlspecialchars($roleTitle) . '</span>';
+                    }
+                    return implode('', $badges);
+                }
+                // Fallback to old behavior if no roles found
                 if ($data->is_manager) {
                     return '<span class="badge bg-soft-danger">Manager</span>';
                 }
-
                 return '<span class="badge bg-soft-info">Staff</span>';
             })
             ->addColumn('branch_id', function ($data) {
@@ -318,7 +368,7 @@ class EmployeesController extends Controller
                 }
 
             })
-            ->rawColumns(['service'])
+            ->rawColumns(['service', 'is_manager'])
             ->orderColumns(['id'], '-:column $1');
 
         // Custom Fields For export
@@ -370,13 +420,40 @@ class EmployeesController extends Controller
 
         $employee_id = $data['id'];
 
-        $roles = ['employee'];
-
-        if ($request->is_manager) {
-            array_push($roles, 'manager');
+        // Handle role assignment
+        $roles = []; // Start with empty array
+        
+        // If role_id is provided, use those roles
+        if ($request->has('role_id') && !empty($request->role_id)) {
+            $role_ids = is_array($request->role_id) ? $request->role_id : explode(',', $request->role_id);
+            $selected_roles = Role::whereIn('id', $role_ids)->pluck('name')->toArray();
+            if (!empty($selected_roles)) {
+                $roles = $selected_roles;
+            }
+        }
+        
+        // If no roles selected, use default behavior
+        if (empty($roles)) {
+            $roles = ['employee']; // Default role
+            if ($request->is_manager) {
+                array_push($roles, 'manager');
+                if ($request->has('branch_id')) {
+                    $branch = Branch::where('id', $request->branch_id)->first();
+                    if ($branch) {
+                        $branch->update(['manager_id' => $employee_id]);
+                    }
+                }
+            }
+        } elseif ($request->is_manager) {
+            // If roles were provided and is_manager is checked, ensure manager role is included
+            if (!in_array('manager', $roles)) {
+                array_push($roles, 'manager');
+            }
             if ($request->has('branch_id')) {
                 $branch = Branch::where('id', $request->branch_id)->first();
-                $branch->update(['manager_id' => $employee_id]);
+                if ($branch) {
+                    $branch->update(['manager_id' => $employee_id]);
+                }
             }
         }
 
@@ -431,7 +508,8 @@ class EmployeesController extends Controller
     {
         $module_action = 'Show';
 
-        $data = User::role('employee')->findOrFail($id);
+        // Show any user who is assigned to branches (personnel)
+        $data = User::whereHas('branches')->findOrFail($id);
 
         return view('employee::backend.employees.show', compact('module_action', "$data"));
     }
@@ -444,7 +522,8 @@ class EmployeesController extends Controller
      */
     public function edit($id)
     {
-        $data = User::role('employee')->with('branches', 'services', 'commissions', 'profile')->findOrFail($id);
+        // Edit any user who is assigned to branches (personnel)
+        $data = User::whereHas('branches')->with('branches', 'services', 'commissions', 'profile', 'roles')->findOrFail($id);
         if (!is_null($data)) {
             $custom_field_data = $data->withCustomFields();
             $data['custom_field_data'] = collect($custom_field_data->custom_fields_data)
@@ -474,6 +553,9 @@ class EmployeesController extends Controller
 
         $data['dribbble_link'] = $data->profile->dribbble_link ?? null;
 
+        // Get employee roles
+        $data['role_id'] = $data->roles->pluck('id')->toArray();
+
         return response()->json(['data' => $data, 'status' => true]);
     }
 
@@ -485,7 +567,8 @@ class EmployeesController extends Controller
      */
     public function update(EmployeeRequest $request, $id)
     {
-        $data = User::role('employee')->findOrFail($id);
+        // Update any user who is assigned to branches (personnel)
+        $data = User::whereHas('branches')->findOrFail($id);
 
         $request_data = $request->except('profile_image');
 
@@ -523,19 +606,44 @@ class EmployeesController extends Controller
 
         EmployeeCommission::where('employee_id', $id)->delete();
 
-        $roles = ['employee'];
-
-        $employee_id = $data->id;
-
-        if ($request->is_manager) {
-            array_push($roles, 'manager');
+        // Handle role assignment
+        $roles = []; // Start with empty array
+        
+        // If role_id is provided, use those roles
+        if ($request->has('role_id') && !empty($request->role_id)) {
+            $role_ids = is_array($request->role_id) ? $request->role_id : explode(',', $request->role_id);
+            $selected_roles = Role::whereIn('id', $role_ids)->pluck('name')->toArray();
+            if (!empty($selected_roles)) {
+                $roles = $selected_roles;
+            }
+        }
+        
+        // If no roles selected, use default behavior
+        if (empty($roles)) {
+            $roles = ['employee']; // Default role
+            if ($request->is_manager) {
+                array_push($roles, 'manager');
+                if ($request->has('branch_id')) {
+                    $branch = Branch::where('id', $request->branch_id)->first();
+                    if ($branch) {
+                        $branch->update(['manager_id' => $data->id]);
+                    }
+                }
+            }
+        } elseif ($request->is_manager) {
+            // If roles were provided and is_manager is checked, ensure manager role is included
+            if (!in_array('manager', $roles)) {
+                array_push($roles, 'manager');
+            }
             if ($request->has('branch_id')) {
                 $branch = Branch::where('id', $request->branch_id)->first();
-                $branch->update(['manager_id' => $employee_id]);
+                if ($branch) {
+                    $branch->update(['manager_id' => $data->id]);
+                }
             }
         }
 
-        // $data->syncRoles($roles);
+        $data->syncRoles($roles);
 
         \Artisan::call('cache:clear');
 
@@ -591,8 +699,8 @@ class EmployeesController extends Controller
             return response()->json(['message' => __('messages.permission_denied'), 'status' => false], 200);
         }
     
-        // Find user by ID with role 'employee'
-        $data = User::role('employee')->findOrFail($id);
+        // Find any user who is assigned to branches (personnel)
+        $data = User::whereHas('branches')->findOrFail($id);
         
         $bookingIds = BookingService::where('employee_id', $id)->pluck('booking_id');
 
@@ -613,7 +721,8 @@ class EmployeesController extends Controller
 
     public function update_status(Request $request, $id)
     {
-        $data = User::role('employee')->findOrFail($id);
+        // Update status of any user who is assigned to branches (personnel)
+        $data = User::whereHas('branches')->findOrFail($id);
         $data->update(['status' => $request->status]);
 
         return response()->json(['status' => true, 'message' => __('branch.status_update')]);
@@ -625,7 +734,8 @@ class EmployeesController extends Controller
 
         $employee_id = $data['employee_id'];
 
-        $data = User::role('employee')->findOrFail($employee_id);
+        // Change password of any user who is assigned to branches (personnel)
+        $data = User::whereHas('branches')->findOrFail($employee_id);
 
         $request_data = $request->only('password');
         $request_data['password'] = Hash::make($request_data['password']);
@@ -652,7 +762,8 @@ class EmployeesController extends Controller
 
     public function verify_employee(Request $request, $id)
     {
-        $data = User::role('employee')->findOrFail($id);
+        // Verify any user who is assigned to branches (personnel)
+        $data = User::whereHas('branches')->findOrFail($id);
 
         $current_time = Carbon::now();
 
@@ -839,8 +950,8 @@ class EmployeesController extends Controller
     }
     public function employeeServices($id)
     {
-        // Find the user with the specified ID and role 'employee'
-        $user = User::role('employee')->with('services.service')->findOrFail($id);
+        // Find any user who is assigned to branches (personnel)
+        $user = User::whereHas('branches')->with('services.service')->findOrFail($id);
 
         $data = [];
 

@@ -119,6 +119,13 @@ return [
         //     'order' => 7,
         // ],
         [
+            'start_icon' => 'fa-regular fa-calendar',
+            'title' => 'sidebar.consultations',
+            'route' => 'backend.consultations.index',
+            'active' => ['app/consultations'],
+            'order' => 8,
+        ],
+        [
             'title' => 'sidebar.users',
             'menu_item_type' => 'static',
             'permission' => ['view_customer', 'view_staff', 'view_customer_reviews'],
@@ -486,6 +493,15 @@ return [
                     'order' => 3,
                     'menu_level' => 1,
                 ],
+                [
+                    'menu_type' => 'horizontal',
+                    'start_icon' => 'fa-regular fa-calendar',
+                    'title' => 'sidebar.consultations',
+                    'route' => 'backend.consultations.index',
+                    'active' => ['app/consultations'],
+                    'order' => 4,
+                    'menu_level' => 1,
+                ],
             ],
         ],
     
@@ -720,6 +736,10 @@ return [
         [
             'route' => 'backend.reports.staff-report',
             'title' => 'Staffs Services',
+        ],
+        [
+            'route' => 'backend.consultations.index',
+            'title' => 'Consultations',
         ],
         [
             'route' => 'backend.settings',

@@ -73,6 +73,7 @@ mix.js("resources/js/import-export.js", "public/js/import-export.min.js")
 // Global Vue Script
 mix.js('resources/js/vue/app.js', 'public/js/vue.min.js').vue();
 mix.js('resources/js/vue/booking-form.js', 'public/js/booking-form.min.js').vue();
+mix.js('resources/js/consultation.js', 'public/js/consultation.js').vue();
 
 /**
  * !Module Based Script & Style Bundel

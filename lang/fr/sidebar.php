@@ -52,6 +52,7 @@ return [
     'promotion' => 'Promotion',
     'package' =>   'Packs',
     'client_packages' => 'Packs Patients',
-    'customer_packages' => 'Packs Patients'
+    'customer_packages' => 'Packs Patients',
+    'consultations' => 'Consultations'
 
 ];

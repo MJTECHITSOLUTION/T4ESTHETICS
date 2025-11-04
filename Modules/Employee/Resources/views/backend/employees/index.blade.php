@@ -142,7 +142,7 @@
             {
                 data: 'is_manager',
                 name: 'is_manager',
-                title: "{{ __('employee.lbl_role') }}"
+                title: "{{ __('permission-role.role_title') ?? 'Permission Role' }}"
             },
             {
                 data: 'email_verified_at',

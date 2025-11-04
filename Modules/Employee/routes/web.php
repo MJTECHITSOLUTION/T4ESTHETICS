@@ -37,6 +37,7 @@ Route::group(['prefix' => 'app', 'as' => 'backend.', 'middleware' => ['auth']], 
 
     Route::group(['prefix' => 'employees', 'as' => 'employees.'], function () {
         Route::get('index_list', [EmployeesController::class, 'index_list'])->name('index_list');
+        Route::get('role_list', [EmployeesController::class, 'role_list'])->name('role_list');
         Route::get('commision_list', [EmployeesController::class, 'commision_list'])->name('commision_list');
 
         Route::get('employee_list', [EmployeesController::class, 'employee_list'])->name('employee_list');

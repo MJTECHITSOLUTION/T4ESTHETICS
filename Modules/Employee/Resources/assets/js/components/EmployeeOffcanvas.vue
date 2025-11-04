@@ -88,6 +88,20 @@
                 </label>
               </div>
             </div>
+
+            <div class="form-group col-md-12">
+              <label class="form-label" for="role_id">{{ $t('permission-role.role_title') || 'Role' }} <span class="text-danger">*</span></label>
+              <Multiselect id="role_id" v-model="role_id" :multiple="true" :value="role_id"
+                placeholder="Select Role(s)" v-bind="multiSelectOption" :options="roles.options" class="form-group">
+              </Multiselect>
+              <span v-if="errorMessages['role_id']">
+                <ul class="text-danger">
+                  <li v-for="err in errorMessages['role_id']" :key="err">{{ err }}</li>
+                </ul>
+              </span>
+              <span class="text-danger">{{ errors.role_id }}</span>
+            </div>
+
             <div class="form-group col-md-12" v-if="branch.options.length > 1 && selectedSessionBranchId == ''">
               <label class="form-label" for="branch">{{ $t('employee.lbl_select_branch') }}</label><span class="text-danger">*</span>
               <Multiselect id="branch_id" v-model="branch_id" :value="branch_id" placeholder="Select Branch"
@@ -168,7 +182,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { EDIT_URL, STORE_URL, UPDATE_URL, BRANCH_LIST, SERVICE_LIST, COMMISSION_LIST, EMAIL_UNIQUE_CHECK } from '../constant/employee'
+import { EDIT_URL, STORE_URL, UPDATE_URL, BRANCH_LIST, SERVICE_LIST, COMMISSION_LIST, ROLE_LIST, EMAIL_UNIQUE_CHECK } from '../constant/employee'
 import { useField, useForm } from 'vee-validate'
 
 import { VueTelInput } from 'vue3-tel-input'
@@ -219,6 +233,7 @@ const currentId = useModuleId(() => {
     branchSelect()
   })
   useSelect({ url: COMMISSION_LIST }, { value: 'id', label: 'name' }).then((data) => (commissions.value = data))
+  useSelect({ url: ROLE_LIST }, { value: 'id', label: 'name' }).then((data) => (roles.value = data))
   if (currentId.value > 0) {
     getRequest({ url: EDIT_URL, id: currentId.value }).then((res) => {
       if (res.status && res.data) {
@@ -234,6 +249,7 @@ const currentId = useModuleId(() => {
 const branch = ref({ options: [], list: [] })
 const commissions = ref({ options: [], list: [] })
 const services = ref({ options: [], list: [] })
+const roles = ref({ options: [], list: [] })
 
 onMounted(() => {
   setFormData(defaultData())
@@ -305,6 +321,7 @@ const defaultData = () => {
     branch_id: 0,
     service_id: [],
     commission_id: '',
+    role_id: [],
     show_in_calender: 1,
     is_manager: 0,
     about_self: '',
@@ -337,6 +354,7 @@ const setFormData = (data) => {
       branch_id: data.branch_id,
       service_id: data.service_id,
       commission_id: data.commission_id,
+      role_id: Array.isArray(data.role_id) ? data.role_id : (data.role_id ? [data.role_id] : []),
       status: data.status ? true : false,
       show_in_calender: data.show_in_calender,
       is_manager: data.is_manager,
@@ -418,6 +436,9 @@ const validationSchema = yup.object({
       .required('Select commission is a required field'),
       branch_id: yup.string()
       .required('Select Branch is a required field'),
+    role_id: yup.array()
+      .min(1, 'At least one role must be selected')
+      .required('Role is a required field'),
 });
 
 
@@ -437,6 +458,7 @@ const { value: branch_id } = useField('branch_id')
 const { value: status } = useField('status')
 const { value: service_id } = useField('service_id')
 const { value: commission_id } = useField('commission_id')
+const { value: role_id } = useField('role_id')
 const { value: profile_image } = useField('profile_image')
 const { value: show_in_calender } = useField('show_in_calender')
 const { value: is_manager } = useField('is_manager')
@@ -461,6 +483,10 @@ const handleInput = (phone, phoneObject) => {
 // Form Submit
 const formSubmit = handleSubmit((values) => {
   values.custom_fields_data = JSON.stringify(values.custom_fields_data)
+  // Convert role_id array to comma-separated string if it's an array
+  if (Array.isArray(values.role_id)) {
+    values.role_id = values.role_id.join(',')
+  }
   if (currentId.value > 0) {
     updateRequest({ url: UPDATE_URL, id: currentId.value, body: values, type: 'file' }).then((res) => reset_datatable_close_offcanvas(res))
   } else {

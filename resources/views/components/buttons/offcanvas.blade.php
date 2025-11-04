@@ -13,6 +13,7 @@
 <button type="button"
     class='btn btn-primary {{($small=='true')? 'btn-sm' : ''}} {{$class}}'
     data-crud-id="0"
+    @if($target) data-bs-target="{{ $target }}" @endif
     title="{{ $title }}">
     <i class="{{$icon}}"></i>
     {{ $slot }}

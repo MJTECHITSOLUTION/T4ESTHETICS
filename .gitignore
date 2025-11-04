@@ -14,21 +14,17 @@ yarn-error.log
 /.vscode
 *.cache
 .DS_Store
+.history
+storage11
+storage
+public/storage
+public/hot
 
-
-<<<<<<< HEAD
-Below Comments For Design Style & Scripts
-/public/css/*
-!/public/css/.gitkeep
-/public/js/core/*
-!/public/js/core/.gitkeep
-=======
 # Below Comments For Design Style & Scripts
 # /public/css/*
 # !/public/css/.gitkeep
 # /public/js/core/*
 # !/public/js/core/.gitkeep
->>>>>>> development
 
 /public/js/*.js*
 !/public/js/.gitkeep
@@ -37,19 +33,8 @@ Below Comments For Design Style & Scripts
 !/public/js/iqonic-script/.gitkeep
 !/public/js/setting-init.js
 
-<<<<<<< HEAD
 /public/modules/**/*
 !/public/modules/.gitkeep
 /public/mix-manifest.json
-=======
-# /public/modules/**/*
-# !/public/modules/.gitkeep
-# /public/mix-manifest.json
-<<<<<<< HEAD
->>>>>>> push-notification-template
->>>>>>> development
-=======
->>>>>>> development
-node_modules
-node_modules
-/storage/media-library/**/*
+
+/storage/media-library/**

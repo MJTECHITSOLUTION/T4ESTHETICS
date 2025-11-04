@@ -19,6 +19,9 @@ export const SERVICE_LIST = ({ branch_id = '', category_id = '', employee_id = '
 export const COMMISSION_LIST = () => {
   return { path: `commissions/index_list`, method: 'GET' }
 }
+export const ROLE_LIST = () => {
+  return { path: `employees/role_list`, method: 'GET' }
+}
 export const CHANGE_PASSWORD_URL = () => {
   return { path: `${MODULE}/change-password/`, method: 'POST' }
 }

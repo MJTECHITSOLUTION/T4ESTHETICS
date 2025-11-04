@@ -6,6 +6,7 @@
 
 @push('after-styles')
 <link rel="stylesheet" href="{{ mix('modules/constant/style.css') }}">
+<link rel="stylesheet" href="{{ asset('vendor/datatable/datatables.min.css') }}">
 <style>
     .customer-profile-header {
         /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
@@ -1166,7 +1167,7 @@
                                         <i class="fa-solid fa-credit-card me-2"></i>
                                         Paiement - Facture #{{ $booking->id }}
                                     </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                 </div>
                                 <form action="{{ route('backend.customers.add-payment', $booking->id) }}" method="POST" id="paymentForm{{ $booking->id }}">
                                     @csrf
@@ -1334,7 +1335,7 @@
                                         <i class="fa-solid fa-receipt me-2"></i>
                                         Détails du paiement - Facture #{{ $booking->id }}
                                     </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row">
@@ -1542,7 +1543,7 @@
                                         <i class="fa-solid fa-credit-card me-2"></i>
                                         Paiement - Facture Devis #{{ $facture->facture_number }}
                                     </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                 </div>
                                 <form action="{{ route('backend.customers.add-devis-facture-payment', $facture->id) }}" method="POST" id="devisFacturePaymentForm{{ $facture->id }}">
                                     @csrf
@@ -1706,7 +1707,7 @@
                                         <i class="fa-solid fa-receipt me-2"></i>
                                         Détails du paiement - Facture Devis #{{ $facture->facture_number }}
                                     </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row">
@@ -2504,7 +2505,28 @@
     <div id="devis-tab-content"></div>
     <div id="devis-history-tab-content"></div>
     <div id="invoice-tab-content"></div>
-    <div id="consultations-tab-content"></div>
+    <!-- Consultations Tab -->
+    <div class="tab-pane fade" id="consultations" role="tabpanel" aria-labelledby="consultations-tab">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0 text-primary">
+                <i class="fa-solid fa-user-md me-2"></i>
+                Consultations
+            </h5>
+            <button type="button" class="btn btn-primary" id="add-consultation-btn">
+                <i class="fa-solid fa-plus me-2"></i>
+                Ajouter une consultation
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="customer-consultations-table" class="table table-striped border table-responsive">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="consentement-tab-content">
         <div class="tab-pane fade" id="consentement" role="tabpanel" aria-labelledby="consentement-tab">
             <div class="card">
@@ -2550,7 +2572,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="preconsultationModalLabel">Formulaire d'Information Patient (Pré-consultation)</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <form id="preconsultationForm">
@@ -2749,7 +2771,7 @@
             <div class="modal-header">
                 <h5 class="modal-title">Aperçu</h5>
                 <div class="ms-auto small text-muted" id="previewCounter">1 / 1</div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <div class="d-flex justify-content-center align-items-center" style="min-height:60vh;background:#111;">
@@ -2780,7 +2802,7 @@
                     <i class="fa-solid fa-file-circle-plus me-2"></i>
                     Ajouter un document médical
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <form id="medicalRecordForm" enctype="multipart/form-data">
@@ -2820,7 +2842,7 @@
                     <i class="fa-solid fa-plus me-2"></i>
                     Ajouter un antécédent
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <form id="medicalHistoryForm">
@@ -2877,7 +2899,7 @@
                     <i class="fa-solid fa-list-ul me-2"></i>
                     Ajouter / Modifier un acte
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <form id="actForm">
@@ -3175,7 +3197,7 @@
                     <i class="fa-solid fa-file-invoice me-2"></i>
                     {{ __('messages.create_devis') }}
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <form id="devisForm">
@@ -3377,7 +3399,7 @@
                     <i class="fa-solid fa-eye me-2"></i>
                     Devis Details
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <!-- Devis Header Info -->
@@ -3469,7 +3491,7 @@
                     <i class="fa-solid fa-print me-2"></i>
                     Print Devis
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body p-0">
                 <div id="print-content" class="p-4">
@@ -3493,7 +3515,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Nouvelle session</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <form id="gallerySessionForm">
@@ -3535,7 +3557,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Ajouter des images</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <form id="appendImagesForm">
@@ -3566,7 +3588,7 @@
                     <i class="fa-solid fa-link me-2"></i>
                     Générer un lien de consentement
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-info">
@@ -3600,7 +3622,7 @@
                     <i class="fa-solid fa-check-circle me-2 text-success"></i>
                     Lien de consentement généré
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-success">
@@ -3634,12 +3656,101 @@
     </div>
 </div>
 
+<!-- Customer Consultation Modal -->
+<div class="modal fade" id="customerConsultationModal" tabindex="-1" aria-labelledby="customerConsultationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerConsultationModalLabel">
+                    <i class="fa-solid fa-user-md me-2"></i>
+                    <span id="consultation-modal-title">Ajouter une consultation</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <form id="customer-consultation-form">
+                <div class="modal-body">
+                    <input type="hidden" id="consultation_id" name="id" value="">
+                    <input type="hidden" id="consultation_patient_id" name="patient_id" value="{{ $data->id }}">
+                    
+                    <!-- Patient Name (Read-only) -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Patient</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            value="{{ $data->first_name }} {{ $data->last_name }}" 
+                            readonly 
+                            disabled
+                        />
+                    </div>
+
+                    <!-- Date Input -->
+                    <div class="form-group mb-3">
+                        <label class="form-label">Date de consultation <span class="text-danger">*</span></label>
+                        <input 
+                            type="date" 
+                            id="consultation_date" 
+                            name="consultation_date" 
+                            class="form-control" 
+                            required
+                        />
+                        <span class="text-danger" id="consultation_date_error"></span>
+                    </div>
+
+                    <!-- Dynamic Textareas -->
+                    <div class="form-group mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label">Éléments de consultation <span class="text-danger">*</span></label>
+                            <button 
+                                type="button" 
+                                class="btn btn-sm btn-primary" 
+                                id="add-consultation-item-btn">
+                                <i class="fas fa-plus"></i> Ajouter un élément
+                            </button>
+                        </div>
+                        
+                        <div id="consultation-items-container">
+                            <div class="mb-3 consultation-item">
+                                <div class="input-group">
+                                    <textarea 
+                                        name="items[]" 
+                                        class="form-control consultation-item-text" 
+                                        rows="3"
+                                        placeholder="Élément 1"
+                                        required
+                                    ></textarea>
+                                    <button 
+                                        type="button" 
+                                        class="btn btn-sm btn-danger remove-item-btn" 
+                                        style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <span class="text-danger" id="consultation_items_error"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary" id="save-consultation-btn">
+                        <i class="fas fa-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('after-scripts')
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 <script src="{{ mix('modules/customer/script.js') }}"></script>
 <script src="{{ asset('js/form-modal/index.js') }}" defer></script>
+<!-- DataTables -->
+<script type="text/javascript" src="{{ asset('vendor/datatable/datatables.min.js') }}"></script>
 
 <script>
 $(document).ready(function() {
@@ -7475,5 +7586,455 @@ $(document).ready(function() {
     clearPhotoGrids();
     initializeComparison();
 });
+
+// Customer Consultations Tab
+(function() {
+    let customerConsultationsDataTable = null;
+    const customerId = {{ $data->id }};
+    
+    // Initialize consultations datatable when tab is shown
+    document.getElementById('consultations-tab')?.addEventListener('shown.bs.tab', function() {
+        if (customerConsultationsDataTable === null) {
+            initCustomerConsultationsTable();
+        }
+    });
+    
+    function initCustomerConsultationsTable() {
+        const columns = [
+            { 
+                data: 'id', 
+                name: 'id', 
+                title: 'ID' 
+            },
+            { 
+                data: 'consultation_date', 
+                name: 'consultation_date', 
+                title: 'Date' 
+            },
+            { 
+                data: 'items', 
+                name: 'items', 
+                title: 'Éléments',
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: 'updated_at',
+                name: 'updated_at',
+                title: 'Mis à jour le',
+                width: '15%',
+            },
+            { 
+                data: 'action', 
+                name: 'action', 
+                orderable: false, 
+                searchable: false, 
+                title: 'Action' 
+            }
+        ];
+        
+        customerConsultationsDataTable = $('#customer-consultations-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route("backend.consultations.index_data") }}',
+                data: function(d) {
+                    d.patient_id = customerId;
+                    d.customer_view = true;
+                }
+            },
+            columns: columns,
+            order: [[3, 'desc']],
+            pageLength: 10,
+            language: {
+                processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Chargement...</span>'
+            },
+            drawCallback: function() {
+                // Handle view items button
+                $('.view-items-btn').off('click').on('click', function() {
+                    const items = $(this).data('items');
+                    const consultationId = $(this).data('id');
+                    const modal = new bootstrap.Modal(document.getElementById('itemsModal'));
+                    
+                    let itemsHtml = '';
+                    if (items && Array.isArray(items) && items.length > 0) {
+                        itemsHtml = '<div class="row g-3">';
+                        items.forEach((item, index) => {
+                            itemsHtml += `
+                                <div class="col-12 col-md-6">
+                                    <div class="card h-100 shadow-sm border-0">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-start mb-2">
+                                                <span class="badge bg-primary rounded-pill me-2 fs-6">${index + 1}</span>
+                                                <h6 class="card-title mb-0 text-primary">
+                                                    <i class="fa-solid fa-file-lines me-2"></i>Élément ${index + 1}
+                                                </h6>
+                                            </div>
+                                            <div class="card-text mt-3">
+                                                <p class="mb-0 text-muted" style="white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(item)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        itemsHtml += '</div>';
+                    } else {
+                        itemsHtml = '<div class="alert alert-info mb-0 text-center"><i class="fa-solid fa-info-circle me-2"></i>Aucun élément trouvé.</div>';
+                    }
+                    
+                    $('#items-list').html(itemsHtml);
+                    $('#itemsModalLabel').html('<i class="fa-regular fa-calendar me-2"></i>Éléments de consultation #' + consultationId);
+                    modal.show();
+                });
+            }
+        });
+        
+        // Store globally
+        window.customerConsultationsDataTable = customerConsultationsDataTable;
+    }
+    
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
+    
+    // Reset consultation form
+    function resetConsultationForm() {
+        $('#consultation_id').val('');
+        $('#consultation_date').val('');
+        $('#consultation_date_error').text('');
+        $('#consultation_items_error').text('');
+        
+        // Reset items - keep only one empty item
+        $('#consultation-items-container').html(`
+            <div class="mb-3 consultation-item">
+                <div class="input-group">
+                    <textarea 
+                        name="items[]" 
+                        class="form-control consultation-item-text" 
+                        rows="3"
+                        placeholder="Élément 1"
+                        required
+                    ></textarea>
+                    <button 
+                        type="button" 
+                        class="btn btn-sm btn-danger remove-item-btn" 
+                        style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `);
+        updateRemoveButtons();
+    }
+    
+    // Add consultation item
+    function addConsultationItem() {
+        const itemCount = $('#consultation-items-container .consultation-item').length + 1;
+        const newItem = `
+            <div class="mb-3 consultation-item">
+                <div class="input-group">
+                    <textarea 
+                        name="items[]" 
+                        class="form-control consultation-item-text" 
+                        rows="3"
+                        placeholder="Élément ${itemCount}"
+                        required
+                    ></textarea>
+                    <button 
+                        type="button" 
+                        class="btn btn-sm btn-danger remove-item-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        $('#consultation-items-container').append(newItem);
+        updateRemoveButtons();
+    }
+    
+    // Update remove buttons visibility
+    function updateRemoveButtons() {
+        const itemCount = $('#consultation-items-container .consultation-item').length;
+        if (itemCount > 1) {
+            $('.remove-item-btn').show();
+        } else {
+            $('.remove-item-btn').hide();
+        }
+    }
+    
+    // Remove consultation item
+    $(document).on('click', '.remove-item-btn', function() {
+        if ($('#consultation-items-container .consultation-item').length > 1) {
+            $(this).closest('.consultation-item').remove();
+            updateRemoveButtons();
+        }
+    });
+    
+    // Handle add consultation item button
+    $(document).on('click', '#add-consultation-item-btn', function() {
+        addConsultationItem();
+    });
+    
+    // Handle add consultation button
+    $(document).on('click', '#add-consultation-btn', function(e) {
+        e.preventDefault();
+        resetConsultationForm();
+        $('#consultation-modal-title').text('Ajouter une consultation');
+        $('#customerConsultationModal').modal('show');
+    });
+    
+    // Handle edit button clicks
+    $(document).on('click', '.edit-consultation-btn', function(e) {
+        e.preventDefault();
+        const btn = $(this);
+        const id = btn.attr('data-id');
+        
+        if (!id) {
+            console.error('No consultation ID found');
+            return false;
+        }
+        
+        // Load consultation data
+        $.ajax({
+            url: '/app/consultations/' + id + '/edit',
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+                if (response.status && response.data) {
+                    const data = response.data;
+                    
+                    // Set form values
+                    $('#consultation_id').val(data.id);
+                    $('#consultation_date').val(data.consultation_date);
+                    
+                    // Clear and populate items
+                    $('#consultation-items-container').empty();
+                    if (data.items && Array.isArray(data.items) && data.items.length > 0) {
+                        data.items.forEach(function(item, index) {
+                            const itemHtml = `
+                                <div class="mb-3 consultation-item">
+                                    <div class="input-group">
+                                        <textarea 
+                                            name="items[]" 
+                                            class="form-control consultation-item-text" 
+                                            rows="3"
+                                            placeholder="Élément ${index + 1}"
+                                            required
+                                        >${escapeHtml(item)}</textarea>
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-sm btn-danger remove-item-btn">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            $('#consultation-items-container').append(itemHtml);
+                        });
+                    } else {
+                        addConsultationItem();
+                    }
+                    updateRemoveButtons();
+                    
+                    // Show modal
+                    $('#consultation-modal-title').text('Modifier la consultation');
+                    $('#customerConsultationModal').modal('show');
+                } else {
+                    window.errorSnackbar('Échec du chargement des données de consultation');
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading consultation:', xhr);
+                window.errorSnackbar('Erreur lors du chargement des données de consultation');
+            }
+        });
+        
+        return false;
+    });
+    
+    // Handle form submission
+    $('#customer-consultation-form').on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            consultation_date: $('#consultation_date').val(),
+            patient_id: $('#consultation_patient_id').val(),
+            items: []
+        };
+        
+        // Collect items
+        $('.consultation-item-text').each(function() {
+            const itemText = $(this).val().trim();
+            if (itemText) {
+                formData.items.push(itemText);
+            }
+        });
+        
+        // Validation
+        if (!formData.consultation_date) {
+            $('#consultation_date_error').text('La date de consultation est requise');
+            return false;
+        }
+        
+        if (formData.items.length === 0) {
+            $('#consultation_items_error').text('Au moins un élément de consultation est requis');
+            return false;
+        }
+        
+        // Clear errors
+        $('#consultation_date_error').text('');
+        $('#consultation_items_error').text('');
+        
+        // Disable submit button
+        const submitBtn = $('#save-consultation-btn');
+        const originalText = submitBtn.html();
+        submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin me-2"></i>Enregistrement...');
+        
+        const consultationId = $('#consultation_id').val();
+        const url = consultationId 
+            ? '/app/consultations/' + consultationId 
+            : '/app/consultations';
+        
+        // Prepare data for update - Laravel expects _method for PUT
+        if (consultationId) {
+            formData._method = 'PUT';
+        }
+        
+        $.ajax({
+            url: url,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.status) {
+                    window.successSnackbar(response.message);
+                    $('#customerConsultationModal').modal('hide');
+                    resetConsultationForm();
+                    
+                    // Reload datatable
+                    if (customerConsultationsDataTable) {
+                        customerConsultationsDataTable.ajax.reload(null, false);
+                    }
+                } else {
+                    window.errorSnackbar(response.message || 'An error occurred');
+                    
+                    // Show validation errors
+                    if (response.all_message) {
+                        Object.keys(response.all_message).forEach(function(key) {
+                            const errorKey = key.replace('.', '_');
+                            $('#' + errorKey + '_error').text(response.all_message[key][0] || '');
+                        });
+                    }
+                }
+            },
+            error: function(xhr) {
+                let errorMsg = 'Une erreur s\'est produite lors de l\'enregistrement';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                } else if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    // Show validation errors
+                    Object.keys(xhr.responseJSON.errors).forEach(function(key) {
+                        const errorKey = key.replace('.', '_');
+                        $('#' + errorKey + '_error').text(xhr.responseJSON.errors[key][0] || '');
+                    });
+                    errorMsg = 'Veuillez corriger les erreurs de validation';
+                }
+                window.errorSnackbar(errorMsg);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).html(originalText);
+            }
+        });
+        
+        return false;
+    });
+    
+    // Reset form when modal is hidden
+    $('#customerConsultationModal').on('hidden.bs.modal', function() {
+        resetConsultationForm();
+    });
+    
+    // Handle delete button clicks
+    $(document).on('click', '.delete-consultation-btn', function(e) {
+        const btn = $(this);
+        const id = btn.attr('data-id');
+        const token = btn.attr('data-token');
+        const url = btn.attr('href');
+        
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette consultation ?')) {
+            $.ajax({
+                url: url,
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                success: function(data) {
+                    if (data.status) {
+                        window.successSnackbar(data.message);
+                        if (customerConsultationsDataTable) {
+                            customerConsultationsDataTable.ajax.reload(null, false);
+                        }
+                    } else {
+                        window.errorSnackbar(data.message || 'An error occurred');
+                    }
+                },
+                error: function(xhr) {
+                    const errorMsg = xhr.responseJSON?.message || 'An error occurred while deleting';
+                    window.errorSnackbar(errorMsg);
+                }
+            });
+        }
+        
+        e.preventDefault();
+        return false;
+    });
+})();
+
+// Items Modal (if not already exists)
+if (!document.getElementById('itemsModal')) {
+    const itemsModal = document.createElement('div');
+    itemsModal.className = 'modal fade';
+    itemsModal.id = 'itemsModal';
+    itemsModal.setAttribute('tabindex', '-1');
+    itemsModal.setAttribute('aria-labelledby', 'itemsModalLabel');
+    itemsModal.setAttribute('aria-hidden', 'true');
+    itemsModal.innerHTML = `
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="itemsModalLabel">
+                        <i class="fa-regular fa-calendar me-2"></i>Éléments de consultation
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="items-list" class="p-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(itemsModal);
+}
 </script>
 @endpush
