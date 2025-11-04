@@ -7602,11 +7602,6 @@ $(document).ready(function() {
     function initCustomerConsultationsTable() {
         const columns = [
             { 
-                data: 'id', 
-                name: 'id', 
-                title: 'ID' 
-            },
-            { 
                 data: 'consultation_date', 
                 name: 'consultation_date', 
                 title: 'Date' 
