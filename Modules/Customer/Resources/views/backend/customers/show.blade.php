@@ -741,7 +741,7 @@
                              alt="{{ $data->full_name }}" 
                              class="img-fluid rounded-circle profile-avatar">
                     @else
-                        <img src="{{ default_user_avatar() }}" 
+                        <img src="{{ asset('img/avatar/avatar.png') }}" 
                              alt="{{ $data->full_name }}" 
                              class="img-fluid rounded-circle profile-avatar">
                     @endif

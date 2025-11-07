@@ -352,7 +352,7 @@
                       </div>
                       <div class="col-md-6">
                         <label class="form-label">E-mail</label>
-                        <input type="email" class="form-control" name="email" value="${user.email??''}" >
+                        <input type="email" class="form-control" name="email" value="${user.email??''}" required>
                       </div>
                       <div class="col-md-6">
                         <label class="form-label">Mobile</label>
