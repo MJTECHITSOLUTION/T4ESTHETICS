@@ -128,8 +128,8 @@
               <span class="text-danger">{{ errors.service_id }}</span>
             </div>
 
-            <div class="form-group col-md-12">
-              <label class="form-label" for="commission_id"> {{ $t('employee.lbl_select_commission') }} <span class="text-danger">*</span> </label>
+            <div class="form-group col-md-12" v-if="false">
+              <label class="form-label" for="commission_id"> {{ $t('employee.lbl_select_commission') }} </label>
               <Multiselect id="commission_id" v-model="commission_id" :value="commission_id"
                 placeholder="Select Commission" v-bind="singleSelectOption" :options="commissions.options"
                 class="form-group"></Multiselect>
@@ -432,8 +432,6 @@ const validationSchema = yup.object({
       return true
     }
     ).oneOf([yup.ref('password')], 'Passwords must match'),
-    commission_id: yup.string()
-      .required('Select commission is a required field'),
       branch_id: yup.string()
       .required('Select Branch is a required field'),
     role_id: yup.array()

@@ -2646,6 +2646,8 @@
                                 <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="depression" id="a9"><label class="form-check-label" for="a9">Dépression / Troubles psychiatriques</label></div>
                                 <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="troubles_alimentaires" id="a10"><label class="form-check-label" for="a10">Anorexie / Boulimie</label></div>
                                 <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="addictions" id="a11"><label class="form-check-label" for="a11">Addictions (Toxico, Alcool)</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="hta" id="a12"><label class="form-check-label" for="a12">Hypertension artérielle (HTA)</label></div>
+                                <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="trouble_respiratoire" id="a13"><label class="form-check-label" for="a13">Trouble respiratoire</label></div>
                             </div>
                         </div>
                     </div>
@@ -6261,6 +6263,10 @@ $(function(){
     const signedUrl = `{{ URL::signedRoute('preconsultation.public', ['customerId' => $data->id]) }}`;
     $('#whatsappPreBtn').on('click', function(e){
         e.preventDefault();
+
+        // WhatsApp API URL for sending message
+        const whatsappUrl = `https://wa.me/+212666187309?text=${encodeURIComponent(signedUrl)}`;
+
         // Copy link to clipboard
         const copyToClipboard = async (text) => {
             try {
@@ -6284,9 +6290,11 @@ $(function(){
 
         copyToClipboard(signedUrl).then(function(){
             alert('Lien de Pré-consultation copié dans le presse-papiers.');
-            window.open(signedUrl, '_blank');
+            // Open WhatsApp with the link
+            window.open(whatsappUrl, '_blank');
         }).catch(function(){
-            window.open(signedUrl, '_blank');
+            // If copy fails, still open WhatsApp
+            window.open(whatsappUrl, '_blank');
         });
     });
 });

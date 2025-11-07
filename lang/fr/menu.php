@@ -4,7 +4,7 @@ return [
     'main' => 'Principal',
     'dashboard' => 'Tableau de bord',
     'calendar_booking' => 'Réservation de Calendrier',
-    'branch' => 'Succursale',
+    'branch' => 'Salle',
     'booking' => 'Réservation',
     'service' => 'Acte',
     'list' => 'Liste',

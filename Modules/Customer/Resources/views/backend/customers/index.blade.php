@@ -47,7 +47,7 @@
       <x-slot name="toolbar">
         <div class="input-group flex-nowrap">
           <span class="input-group-text" id="addon-wrapping"><i class="fa-solid fa-magnifying-glass"></i></span>
-          <input type="text" class="form-control dt-search" placeholder="{{ __('messages.search') }}..." aria-label="Search"
+          <input type="text" class="form-control dt-search" placeholder="{{ __('messages.search') }}..." aria-label="Rechercher"
             aria-describedby="addon-wrapping">
         </div>
         @hasPermission('add_customer')
@@ -73,7 +73,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="emptyModalLabel">Modifier patient</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
       </div>
       <div class="modal-body">
         <!-- Intentionally empty for now -->
@@ -262,6 +262,8 @@
       const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
 
       if (url) {
+        // Set modal title for edit context
+        try { document.getElementById('emptyModalLabel').textContent = 'Modifier patient'; } catch (_) {}
         modalBody.html('<div class="p-4 text-center"><div class="spinner-border" role="status"></div></div>');
         modal.show();
 
@@ -281,10 +283,11 @@
                 // Prefer POST-only route if available, else fallback to RESTful PUT via spoofing
                 const updateUrl = base + '/' + user.id + '/update';
                 const genderOptions = ['male','female','other'];
+                const genderLabels = { male: 'Homme', female: 'Femme', other: 'Autre' };
                 const genderRadios = genderOptions.map(g => `
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="gender" id="gender_${g}" value="${g}" ${user.gender===g?'checked':''}>
-                    <label class="form-check-label" for="gender_${g}">${g.charAt(0).toUpperCase()+g.slice(1)}</label>
+                    <label class="form-check-label" for="gender_${g}">${genderLabels[g] || g.charAt(0).toUpperCase()+g.slice(1)}</label>
                   </div>
                 `).join('');
 
@@ -340,15 +343,15 @@
                         </div>
                       </div>
                       <div class="col-md-6">
-                        <label class="form-label">First name</label>
+                        <label class="form-label">Prénom</label>
                         <input type="text" class="form-control" name="first_name" value="${user.first_name??''}" required>
                       </div>
                       <div class="col-md-6">
-                        <label class="form-label">Last name</label>
+                        <label class="form-label">Nom</label>
                         <input type="text" class="form-control" name="last_name" value="${user.last_name??''}" required>
                       </div>
                       <div class="col-md-6">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">E-mail</label>
                         <input type="email" class="form-control" name="email" value="${user.email??''}" required>
                       </div>
                       <div class="col-md-6">
@@ -356,7 +359,7 @@
                         <input type="text" class="form-control" name="mobile" value="${user.mobile??''}">
                       </div>
                       <div class="col-md-12">
-                        <label class="form-label d-block">Gender</label>
+                        <label class="form-label d-block">Genre</label>
                         ${genderRadios}
                       </div>
                       <div class="col-md-12">
@@ -398,8 +401,8 @@
                         <textarea class="form-control" rows="2" name="remarque_interne">${user.remarque_interne??''}</textarea>
                       </div>
                       <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Mettre à jour</button>
                       </div>
                     </div>
                   </form>
@@ -418,7 +421,7 @@
                   console.warn('[CustomerModal] Select2 init failed (library missing?)', e);
                 }
               } else {
-                modalBody.html('<div class="p-4 text-danger">Invalid response.</div>');
+                modalBody.html('<div class="p-4 text-danger">Réponse invalide.</div>');
               }
             } else {
               // Fallback: response is HTML, inject directly
@@ -429,7 +432,7 @@
           })
           .catch((err) => {
             console.error('[CustomerModal] Fetch edit error', err);
-            modalBody.html('<div class="p-4 text-danger">Failed to load form.</div>');
+            modalBody.html('<div class="p-4 text-danger">Échec du chargement du formulaire.</div>');
           });
 
         modalEl.addEventListener('hidden.bs.modal', function () {
@@ -440,10 +443,11 @@
         const createUrl = $('#customerCreateUrl').val();
         const token = $('#customerCsrfToken').val();
         const genderOptions = ['male','female','other'];
+        const genderLabels = { male: 'Homme', female: 'Femme', other: 'Autre' };
         const genderRadios = genderOptions.map(g => `
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="gender" id="gender_${g}" value="${g}">
-            <label class="form-check-label" for="gender_${g}">${g.charAt(0).toUpperCase()+g.slice(1)}</label>
+            <label class="form-check-label" for="gender_${g}">${genderLabels[g] || g.charAt(0).toUpperCase()+g.slice(1)}</label>
           </div>
         `).join('');
         const languageOptions = [
@@ -489,15 +493,15 @@
                 </div>
               </div>
               <div class="col-md-6">
-                <label class="form-label">First name</label>
+                <label class="form-label">Prénom</label>
                 <input type="text" class="form-control" name="first_name" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Last name</label>
+                <label class="form-label">Nom</label>
                 <input type="text" class="form-control" name="last_name" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Email</label>
+                <label class="form-label">E-mail</label>
                 <input type="email" class="form-control" name="email" required>
               </div>
               <div class="col-md-6">
@@ -505,7 +509,7 @@
                 <input type="text" class="form-control" name="mobile">
               </div>
               <div class="col-md-12">
-                <label class="form-label d-block">Gender</label>
+                <label class="form-label d-block">Genre</label>
                 ${genderRadios}
               </div>
               <div class="col-md-12">
@@ -547,7 +551,7 @@
                 <textarea class="form-control" rows="2" name="remarque_interne"></textarea>
               </div>
               <div class="col-12 d-flex justify-content-end gap-2 mt-2">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="submit" class="btn btn-primary">{{ __('messages.save') }}</button>
               </div>
             </div>
@@ -646,10 +650,10 @@
           $(form).find('.alert.alert-danger').remove();
           $(form).prepend(alertHtml);
         }
-        if (window.errorSnackbar) { window.errorSnackbar(data?.message || 'Update failed'); }
+        if (window.errorSnackbar) { window.errorSnackbar(data?.message || 'Échec de la mise à jour'); }
         console.warn('[CustomerModal] Submit error', { status, data });
       }).catch((err) => {
-        if (window.errorSnackbar) { window.errorSnackbar('Network error'); }
+        if (window.errorSnackbar) { window.errorSnackbar('Erreur réseau'); }
         console.error('[CustomerModal] Submit network error', err);
       }).finally(() => {
         $submitBtns.prop('disabled', false);

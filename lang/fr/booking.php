@@ -83,7 +83,7 @@ return [
     'customer_name' => 'Sélectionner le Nom du patient',
     'staff_name' => 'Sélectionner le Nom du Personnel',
     'select_service' => 'Sélectionner les actes',
-    'branch_name' => 'Nom de la Succursale',
+    'branch_name' => 'Nom de la Salle',
     'invoice_time' => 'Heure de la Facture',
 
 ];

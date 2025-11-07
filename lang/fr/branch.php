@@ -47,7 +47,7 @@ return [
     'lbl_action' => 'Action',
     'all_branches' => 'Toutes les salles',
     'assign_branch_to_service' => 'Attribuer une salle au acte',
-    'branch_name' => 'Entrez le nom de la succursale',
+    'branch_name' => 'Entrez le nom de la salle',
     'assign_manager' => 'Sélectionner le manager',
     'select_service' => 'Sélectionnez le acte',
     'enter_email' => 'Entrez l\'email',

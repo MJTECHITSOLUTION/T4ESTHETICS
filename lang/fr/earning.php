@@ -16,7 +16,7 @@ return [
     'lbl_staff_earning' => 'Gain du personnel',
     'lbl_payment_type' => 'Type de paiement',
     'lbl_date' => 'Date de paiement',
-    'lbl_branch_name' => 'Nom de la succursale',
+    'lbl_branch_name' => 'Nom de la salle',
     'lbl_action' => 'Action',
     'lbl_tot_booking' => 'Total des réservations',
     'lbl_title_earning' => 'Gains du personnel',

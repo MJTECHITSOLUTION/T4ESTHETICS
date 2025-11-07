@@ -81,9 +81,11 @@
             'glaucome' => 'Glaucome',
             'depression' => 'Dépression / Troubles psychiatriques',
             'troubles_alimentaires' => 'Anorexie / Boulimie',
-            'addictions' => 'Addictions (Toxico, Alcool)'
+            'addictions' => 'Addictions (Toxico, Alcool)',
+            'hta' => 'Hypertension artérielle (HTA)',
+            'trouble_respiratoire' => 'Trouble respiratoire'
         ]; @endphp
-        @php $rows = 4; $cols = 3; $optKeys = array_keys($opts); @endphp
+        @php $rows = 5; $cols = 3; $optKeys = array_keys($opts); @endphp
         <table class="checks-table">
             @for($r=0; $r<$rows; $r++)
                 <tr>

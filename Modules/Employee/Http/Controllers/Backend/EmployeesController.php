@@ -663,7 +663,7 @@ class EmployeesController extends Controller
                 foreach ($services as $value) {
                     $service_data = [
 
-                        'employee_id' => $employee_id,
+                        'employee_id' => $id,
                         'service_id' => $value,
 
                     ];

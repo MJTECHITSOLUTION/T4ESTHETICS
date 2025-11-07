@@ -115,6 +115,8 @@
                         <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="depression" id="a9" {{ in_array('depression', $pref['antecedents']) ? 'checked' : '' }}><label class="form-check-label" for="a9">Dépression / Troubles psychiatriques</label></div>
                         <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="troubles_alimentaires" id="a10" {{ in_array('troubles_alimentaires', $pref['antecedents']) ? 'checked' : '' }}><label class="form-check-label" for="a10">Anorexie / Boulimie</label></div>
                         <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="addictions" id="a11" {{ in_array('addictions', $pref['antecedents']) ? 'checked' : '' }}><label class="form-check-label" for="a11">Addictions (Toxico, Alcool)</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="hta" id="a12" {{ in_array('hta', $pref['antecedents']) ? 'checked' : '' }}><label class="form-check-label" for="a12">Hypertension artérielle (HTA)</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" name="antecedents[]" value="trouble_respiratoire" id="a13" {{ in_array('trouble_respiratoire', $pref['antecedents']) ? 'checked' : '' }}><label class="form-check-label" for="a13">Trouble respiratoire</label></div>
                     </div>
                 </div>
             </div>
