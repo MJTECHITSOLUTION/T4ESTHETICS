@@ -13,6 +13,93 @@
         .step-indicator { display: flex; gap: 8px; }
         .step-indicator .step { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e9ecef; }
         .step-indicator .step.active { background: #0d6efd; color: #fff; }
+        
+        /* View mode toggle styles */
+        .view-mode-toggle {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .view-mode-toggle label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin: 0;
+            font-weight: 500;
+            color: #495057;
+            flex: 1;
+            min-width: 200px;
+        }
+        .view-mode-toggle .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #0d6efd;
+            flex-shrink: 0;
+        }
+        .view-mode-toggle .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .view-mode-toggle small {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        @media (max-width: 576px) {
+            .view-mode-toggle {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .view-mode-toggle label {
+                width: 100%;
+                min-width: auto;
+            }
+        }
+        
+        /* Scroll mode styles */
+        .form-scroll-mode .devis-step {
+            display: block !important;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .form-scroll-mode .devis-step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .form-scroll-mode .step-indicator {
+            display: none !important;
+        }
+        .form-scroll-mode .devis-step h5 {
+            color: #0d6efd;
+            margin-bottom: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .form-scroll-mode #formButtons {
+            margin-top: 32px;
+        }
+        
+        /* Step-by-step mode styles */
+        .form-step-mode .devis-step {
+            display: none;
+        }
+        .form-step-mode .devis-step h5 {
+            display: none;
+        }
+        .form-step-mode .step-indicator {
+            display: flex !important;
+        }
     </style>
     <script>
         window.__PUBLIC_CUSTOMER_ID__ = {{ (int) $user->id }};
@@ -28,6 +115,14 @@
     </div>
     <div class="card-body">
         <p class="text-muted">Merci de remplir ce formulaire avant votre consultation.</p>
+
+        <div class="view-mode-toggle">
+            <label for="viewModeToggle" class="form-check-label">
+                <input type="checkbox" class="form-check-input" id="viewModeToggle">
+                Mode étape par étape
+            </label>
+            <small class="text-muted">Décochez pour voir tout le formulaire en une page</small>
+        </div>
 
         @php(
             $pref = [
@@ -47,7 +142,7 @@
             ]
         )
 
-        <form id="publicPreForm" class="mt-3">
+        <form id="publicPreForm" class="mt-3 form-scroll-mode">
             <input type="hidden" name="customer_id" value="{{ $user->id }}">
 
             <div class="step-indicator mb-3">
@@ -62,6 +157,7 @@
             </div>
 
             <div class="devis-step" data-step-panel="1">
+                <h5>Étape 1: Identité</h5>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Nom</label>
@@ -100,7 +196,8 @@
                 </div>
             </div>
 
-            <div class="devis-step" data-step-panel="2" style="display:none;">
+            <div class="devis-step" data-step-panel="2">
+                <h5>Étape 2: Antécédents Médicaux et Chirurgicaux</h5>
                 <label class="form-label">Antécédents Médicaux et Chirurgicaux</label>
                 <div class="row">
                     <div class="col-12">
@@ -121,7 +218,8 @@
                 </div>
             </div>
 
-            <div class="devis-step" data-step-panel="3" style="display:none;">
+            <div class="devis-step" data-step-panel="3">
+                <h5>Étape 3: Maladies Auto-immunes</h5>
                 <label class="form-label">Avez-vous des maladies auto-immunes suivantes ?</label>
                 <div class="row">
                     <div class="col-12">
@@ -137,7 +235,8 @@
                 </div>
             </div>
 
-            <div class="devis-step" data-step-panel="4" style="display:none;">
+            <div class="devis-step" data-step-panel="4">
+                <h5>Étape 4: Réactions Allergiques</h5>
                 <label class="form-label">Avez-vous eu des réactions allergiques suite à un acte esthétique ?</label>
                 <div class="row">
                     <div class="col-12">
@@ -150,12 +249,14 @@
                 </div>
             </div>
 
-            <div class="devis-step" data-step-panel="5" style="display:none;">
+            <div class="devis-step" data-step-panel="5">
+                <h5>Étape 5: Traitements Médicamenteux</h5>
                 <label class="form-label">Vos traitements médicamenteux</label>
                 <textarea name="traitements" class="form-control" rows="4" placeholder="Listez vos traitements et compléments actuels">{{ old('traitements', $pref['traitements']) }}</textarea>
             </div>
 
-            <div class="devis-step" data-step-panel="6" style="display:none;">
+            <div class="devis-step" data-step-panel="6">
+                <h5>Étape 6: Antécédents Esthétiques</h5>
                 <label class="form-label">Antécédents Esthétiques</label>
                 <div class="row">
                     <div class="col-12">
@@ -173,7 +274,8 @@
                 </div>
             </div>
 
-            <div class="devis-step" data-step-panel="7" style="display:none;">
+            <div class="devis-step" data-step-panel="7">
+                <h5>Étape 7: Motif de Consultation</h5>
                 <label class="form-label">Votre motif principal de consultation ce jour</label>
                 <div class="row">
                     <div class="col-12">
@@ -198,7 +300,8 @@
                 </div>
             </div>
 
-            <div class="devis-step" data-step-panel="8" style="display:none;">
+            <div class="devis-step" data-step-panel="8">
+                <h5>Étape 8: Finalisation</h5>
                 <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox" id="parrainage" name="parrainage" value="1" {{ $pref['parrainage'] ? 'checked' : '' }}>
                     <label class="form-check-label" for="parrainage">Souhaitez-vous participer à un programme de parrainage ?</label>
@@ -209,10 +312,10 @@
                 </div>
             </div>
 
-            <div class="d-flex gap-2 mt-4">
+            <div class="d-flex gap-2 mt-4" id="formButtons">
                 <button type="button" id="publicPrev" class="btn btn-outline-primary" style="display:none;">Précédent</button>
-                <button type="button" id="publicNext" class="btn btn-primary">Suivant</button>
-                <button type="button" id="submitBtn" class="btn btn-success" style="display:none;">Envoyer</button>
+                <button type="button" id="publicNext" class="btn btn-primary" style="display:none;">Suivant</button>
+                <button type="button" id="submitBtn" class="btn btn-success">Envoyer</button>
             </div>
         </form>
     </div>
@@ -221,8 +324,31 @@
 <script>
 let step = 1;
 const total = 8;
+let isStepMode = false; // Default is scroll mode
+
+// Function to switch between scroll mode and step-by-step mode
+function toggleViewMode() {
+    const $form = $('#publicPreForm');
+    isStepMode = $('#viewModeToggle').is(':checked');
+    
+    if (isStepMode) {
+        // Step-by-step mode
+        $form.removeClass('form-scroll-mode').addClass('form-step-mode');
+        $('.step-indicator').show();
+        updateSteps(); // This will handle showing/hiding the correct step
+    } else {
+        // Scroll mode (default)
+        $form.removeClass('form-step-mode').addClass('form-scroll-mode');
+        // CSS will handle showing all steps in scroll mode
+        $('.step-indicator').hide();
+        $('#publicPrev, #publicNext').hide();
+        $('#submitBtn').show();
+    }
+}
 
 function updateSteps(){
+    if (!isStepMode) return; // Only update if in step mode
+    
     $('.devis-step').hide();
     $(`[data-step-panel="${step}"]`).show();
     $('#publicPrev').toggle(step > 1);
@@ -233,11 +359,31 @@ function updateSteps(){
 }
 
 $(function(){
-    updateSteps();
-    $('#publicPrev').on('click', function(){ if(step>1){ step--; updateSteps(); }});
-    $('#publicNext').on('click', function(){ if(step<total){ step++; updateSteps(); }});
+    // Initialize with scroll mode (default)
+    toggleViewMode();
+    
+    // Handle view mode toggle
+    $('#viewModeToggle').on('change', function(){
+        toggleViewMode();
+    });
+    
+    // Step navigation (only used in step mode)
+    $('#publicPrev').on('click', function(){ 
+        if(step > 1){ 
+            step--; 
+            updateSteps(); 
+        }
+    });
+    
+    $('#publicNext').on('click', function(){ 
+        if(step < total){ 
+            step++; 
+            updateSteps(); 
+        }
+    });
 });
 
+// Submit handler
 $('#submitBtn').on('click', function(){
     const $btn = $(this);
     const original = $btn.html();
@@ -245,7 +391,14 @@ $('#submitBtn').on('click', function(){
 
     const fd = new FormData(document.getElementById('publicPreForm'));
     const payload = {};
-    fd.forEach((v,k)=>{ if (payload[k] !== undefined) { if(!Array.isArray(payload[k])) payload[k] = [payload[k]]; payload[k].push(v);} else { payload[k]=v; } });
+    fd.forEach((v,k)=>{ 
+        if (payload[k] !== undefined) { 
+            if(!Array.isArray(payload[k])) payload[k] = [payload[k]]; 
+            payload[k].push(v);
+        } else { 
+            payload[k]=v; 
+        } 
+    });
 
     $.ajax({
         url: window.__SIGNED_POST__,
@@ -255,6 +408,9 @@ $('#submitBtn').on('click', function(){
         success: function(resp){
             alert(resp.message || 'Merci, vos informations ont été enregistrées.');
             document.getElementById('publicPreForm').reset();
+            // Reset to scroll mode after submission
+            $('#viewModeToggle').prop('checked', false);
+            toggleViewMode();
         },
         error: function(xhr){
             let msg = 'Une erreur est survenue.';
